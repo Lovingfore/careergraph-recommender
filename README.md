@@ -17,6 +17,7 @@
 - `src/temporal_gat.py`：时序 GRU + 多头邻居聚合的 TemporalGAT 最小可运行骨架，训练和调参安排在第二周。
 - `src/verify_stage1.py`：输出第1周数据、数据库、特征、Loader 和 Web 契约验收 JSON。
 - `web/`：不新增 ORM 表的最小 Django 展示，页面和 `/api/summary/` 共用上述服务。
+- `docs/reports/CareerGraph_Recommender_Week1_Report.docx`：第一周阶段汇报，逐项对照计划表说明已完成任务、实现细节、验收证据和第二周边界。
 
 运行后还会得到 `data/clean/clean_log.csv`，用于记录每一步清洗动作和行数变化；`data/processed/transition_graph.json` 保存职位转移图的可读版本。
 
@@ -76,3 +77,7 @@ SQLite 数据库包含 `occupations`、`skills`、`occupation_skill`、`user_pro
 ## 重要限制
 
 该数据包用于课程项目原型和方法验证，不代表真实招聘市场规律，也不提供就业承诺。报告中应分别说明 O*NET 真实来源数据和本项目生成的教学数据。
+
+## 阶段汇报
+
+第一周“算法选择与数据库搭建”阶段汇报见 [`docs/reports/CareerGraph_Recommender_Week1_Report.docx`](docs/reports/CareerGraph_Recommender_Week1_Report.docx)。文档记录了数据清洗、SQLite 建库入库、图结构与时序特征、DataLoader、TemporalGAT 前向骨架、Django 验证结果，以及尚未提前宣称的训练与调参工作。
