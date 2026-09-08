@@ -1,0 +1,8 @@
+﻿feature,name,definition
+match_score,余弦相似度,用户技能向量与职位需求向量的相似度
+gap_score,加权技能缺口,目标职位要求超过用户当前水平的差距
+missing_skill_count,缺口技能数量,需求权重较高但用户水平不足的技能个数
+path_probability,路径可行性,职位转移图上最多三跳路径的最大概率乘积
+growth_score,职业提升空间,目标职位平均要求相对当前职位的归一化提升
+estimated_training_hours,预计补全时间,40 + 320*gap_score + 12*missing_skill_count
+recommendation_score,推荐总分,0.45 Match - 0.25 Gap + 0.15 Growth + 0.15 Path

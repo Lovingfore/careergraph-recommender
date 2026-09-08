@@ -1,0 +1,23 @@
+# Local Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Local/editor/runtime files
+.env
+.idea/
+.vscode/
+*.log
+work/
+
+# Keep clean/processed teaching outputs under version control, but omit the
+# large original O*NET extract.  Download it from the official source listed
+# in data/raw/README.md when reproducing the preparation step.
+data/raw/*
+!data/raw/README.md
+
+# Django local runtime databases (the checked-in demo database is explicit)
+db.sqlite3

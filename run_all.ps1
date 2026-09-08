@@ -1,0 +1,16 @@
+$ErrorActionPreference = 'Stop'
+Set-Location $PSScriptRoot
+
+if (-not (Test-Path -LiteralPath '.venv\Scripts\python.exe')) {
+    py -3.12 -m venv .venv
+}
+
+$python = (Resolve-Path '.venv\Scripts\python.exe').Path
+& $python -m pip install -r requirements.txt
+& $python src\prepare_dataset.py
+& $python src\forecast_skills.py
+& $python src\build_features.py
+& $python src\evaluate_recommendation.py
+& $python src\init_database.py --db-path artifacts\topic17.sqlite3 --data-dir data\clean
+& $python src\verify_stage1.py --db-path artifacts\topic17.sqlite3
+Write-Host "CareerGraph Recommender data, database, feature, and verification pipeline completed."

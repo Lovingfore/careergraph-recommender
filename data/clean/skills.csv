@@ -1,0 +1,36 @@
+﻿skill_id,skill_name,skill_category
+2.A.1.a,Reading Comprehension,cognitive
+2.A.1.b,Active Listening,communication
+2.A.1.c,Writing,communication
+2.A.1.d,Speaking,communication
+2.A.1.e,Mathematics,general
+2.A.1.f,Science,general
+2.A.2.a,Critical Thinking,cognitive
+2.A.2.b,Active Learning,general
+2.A.2.c,Learning Strategies,general
+2.A.2.d,Monitoring,general
+2.B.1.a,Social Perceptiveness,communication
+2.B.1.b,Coordination,general
+2.B.1.c,Persuasion,general
+2.B.1.d,Negotiation,general
+2.B.1.e,Instructing,general
+2.B.1.f,Service Orientation,general
+2.B.2.i,Complex Problem Solving,cognitive
+2.B.3.a,Operations Analysis,technical
+2.B.3.b,Technology Design,technical
+2.B.3.c,Equipment Selection,general
+2.B.3.d,Installation,general
+2.B.3.e,Programming,technical
+2.B.3.g,Operations Monitoring,general
+2.B.3.h,Operation and Control,general
+2.B.3.j,Equipment Maintenance,general
+2.B.3.k,Troubleshooting,technical
+2.B.3.l,Repairing,general
+2.B.3.m,Quality Control Analysis,technical
+2.B.4.e,Judgment and Decision Making,general
+2.B.4.g,Systems Analysis,cognitive
+2.B.4.h,Systems Evaluation,cognitive
+2.B.5.a,Time Management,general
+2.B.5.b,Management of Financial Resources,general
+2.B.5.c,Management of Material Resources,general
+2.B.5.d,Management of Personnel Resources,general

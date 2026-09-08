@@ -1,0 +1,12 @@
+{
+  "source": "O*NET 30.2 Database, February 2026 release",
+  "source_url": "https://www.onetcenter.org/database.html",
+  "license": "CC BY 4.0",
+  "selected_occupations": 12,
+  "skills": 35,
+  "occupation_skill_rows": 420,
+  "users": 6,
+  "user_skill_event_rows": 1260,
+  "transition_rows": 12,
+  "note": "O*NET tables are public source data. user_skill_events and job_transitions are deterministic teaching data derived from selected O*NET occupations and must be labeled as simulated in reports."
+}
