@@ -1,0 +1,421 @@
+﻿source,target,occupation_id,skill_id,skill_name,weight,importance,level,importance_norm,level_norm,is_required,skill_source
+occupation:15-1211.00,skill:2.A.1.a,15-1211.00,2.A.1.a,Reading Comprehension,0.498857,3.88,4.5,0.776,0.642857,1,15-1211.00
+occupation:15-1211.00,skill:2.A.1.b,15-1211.00,2.A.1.b,Active Listening,0.428571,3.75,4.0,0.75,0.571429,1,15-1211.00
+occupation:15-1211.00,skill:2.A.1.c,15-1211.00,2.A.1.c,Writing,0.386286,3.38,4.0,0.676,0.571429,1,15-1211.00
+occupation:15-1211.00,skill:2.A.1.d,15-1211.00,2.A.1.d,Speaking,0.457143,4.0,4.0,0.8,0.571429,1,15-1211.00
+occupation:15-1211.00,skill:2.A.1.e,15-1211.00,2.A.1.e,Mathematics,0.289714,3.0,3.38,0.6,0.482857,1,15-1211.00
+occupation:15-1211.00,skill:2.A.1.f,15-1211.00,2.A.1.f,Science,0.120857,2.25,1.88,0.45,0.268571,0,15-1211.00
+occupation:15-1211.00,skill:2.A.2.a,15-1211.00,2.A.2.a,Critical Thinking,0.428571,3.75,4.0,0.75,0.571429,1,15-1211.00
+occupation:15-1211.00,skill:2.A.2.b,15-1211.00,2.A.2.b,Active Learning,0.413714,3.62,4.0,0.724,0.571429,1,15-1211.00
+occupation:15-1211.00,skill:2.A.2.c,15-1211.00,2.A.2.c,Learning Strategies,0.267429,3.12,3.0,0.624,0.428571,0,15-1211.00
+occupation:15-1211.00,skill:2.A.2.d,15-1211.00,2.A.2.d,Monitoring,0.386286,3.38,4.0,0.676,0.571429,1,15-1211.00
+occupation:15-1211.00,skill:2.B.1.a,15-1211.00,2.B.1.a,Social Perceptiveness,0.278126,3.12,3.12,0.624,0.445714,0,15-1211.00
+occupation:15-1211.00,skill:2.B.1.b,15-1211.00,2.B.1.b,Coordination,0.289714,3.12,3.25,0.624,0.464286,1,15-1211.00
+occupation:15-1211.00,skill:2.B.1.c,15-1211.00,2.B.1.c,Persuasion,0.235714,2.75,3.0,0.55,0.428571,0,15-1211.00
+occupation:15-1211.00,skill:2.B.1.d,15-1211.00,2.B.1.d,Negotiation,0.178571,2.5,2.5,0.5,0.357143,0,15-1211.00
+occupation:15-1211.00,skill:2.B.1.e,15-1211.00,2.B.1.e,Instructing,0.297874,2.88,3.62,0.576,0.517143,1,15-1211.00
+occupation:15-1211.00,skill:2.B.1.f,15-1211.00,2.B.1.f,Service Orientation,0.257143,3.0,3.0,0.6,0.428571,0,15-1211.00
+occupation:15-1211.00,skill:2.B.2.i,15-1211.00,2.B.2.i,Complex Problem Solving,0.386286,3.38,4.0,0.676,0.571429,1,15-1211.00
+occupation:15-1211.00,skill:2.B.3.a,15-1211.00,2.B.3.a,Operations Analysis,0.321429,3.0,3.75,0.6,0.535714,1,15-1211.00
+occupation:15-1211.00,skill:2.B.3.b,15-1211.00,2.B.3.b,Technology Design,0.256731,2.88,3.12,0.576,0.445714,0,15-1211.00
+occupation:15-1211.00,skill:2.B.3.c,15-1211.00,2.B.3.c,Equipment Selection,0.153,2.25,2.38,0.45,0.34,0,15-1211.00
+occupation:15-1211.00,skill:2.B.3.d,15-1211.00,2.B.3.d,Installation,0.034714,1.62,0.75,0.324,0.107143,0,15-1211.00
+occupation:15-1211.00,skill:2.B.3.e,15-1211.00,2.B.3.e,Programming,0.371429,3.25,4.0,0.65,0.571429,1,15-1211.00
+occupation:15-1211.00,skill:2.B.3.g,15-1211.00,2.B.3.g,Operations Monitoring,0.267429,3.0,3.12,0.6,0.445714,0,15-1211.00
+occupation:15-1211.00,skill:2.B.3.h,15-1211.00,2.B.3.h,Operation and Control,0.178571,2.5,2.5,0.5,0.357143,0,15-1211.00
+occupation:15-1211.00,skill:2.B.3.j,15-1211.00,2.B.3.j,Equipment Maintenance,0.053714,1.88,1.0,0.376,0.142857,0,15-1211.00
+occupation:15-1211.00,skill:2.B.3.k,15-1211.00,2.B.3.k,Troubleshooting,0.345874,3.12,3.88,0.624,0.554286,1,15-1211.00
+occupation:15-1211.00,skill:2.B.3.l,15-1211.00,2.B.3.l,Repairing,0.067143,1.88,1.25,0.376,0.178571,0,15-1211.00
+occupation:15-1211.00,skill:2.B.3.m,15-1211.00,2.B.3.m,Quality Control Analysis,0.3,3.0,3.5,0.6,0.5,1,15-1211.00
+occupation:15-1211.00,skill:2.B.4.e,15-1211.00,2.B.4.e,Judgment and Decision Making,0.426126,3.62,4.12,0.724,0.588571,1,15-1211.00
+occupation:15-1211.00,skill:2.B.4.g,15-1211.00,2.B.4.g,Systems Analysis,0.428571,3.75,4.0,0.75,0.571429,1,15-1211.00
+occupation:15-1211.00,skill:2.B.4.h,15-1211.00,2.B.4.h,Systems Evaluation,0.441429,3.75,4.12,0.75,0.588571,1,15-1211.00
+occupation:15-1211.00,skill:2.B.5.a,15-1211.00,2.B.5.a,Time Management,0.301303,3.12,3.38,0.624,0.482857,1,15-1211.00
+occupation:15-1211.00,skill:2.B.5.b,15-1211.00,2.B.5.b,Management of Financial Resources,0.121143,2.12,2.0,0.424,0.285714,0,15-1211.00
+occupation:15-1211.00,skill:2.B.5.c,15-1211.00,2.B.5.c,Management of Material Resources,0.1,2.0,1.75,0.4,0.25,0,15-1211.00
+occupation:15-1211.00,skill:2.B.5.d,15-1211.00,2.B.5.d,Management of Personnel Resources,0.246857,2.88,3.0,0.576,0.428571,0,15-1211.00
+occupation:15-1212.00,skill:2.A.1.a,15-1212.00,2.A.1.a,Reading Comprehension,0.470857,4.0,4.12,0.8,0.588571,1,15-1212.00
+occupation:15-1212.00,skill:2.A.1.b,15-1212.00,2.A.1.b,Active Listening,0.415714,3.75,3.88,0.75,0.554286,1,15-1212.00
+occupation:15-1212.00,skill:2.A.1.c,15-1212.00,2.A.1.c,Writing,0.375,3.5,3.75,0.7,0.535714,1,15-1212.00
+occupation:15-1212.00,skill:2.A.1.d,15-1212.00,2.A.1.d,Speaking,0.387857,3.62,3.75,0.724,0.535714,1,15-1212.00
+occupation:15-1212.00,skill:2.A.1.e,15-1212.00,2.A.1.e,Mathematics,0.153,2.25,2.38,0.45,0.34,0,15-1212.00
+occupation:15-1212.00,skill:2.A.1.f,15-1212.00,2.A.1.f,Science,0.087017,1.88,1.62,0.376,0.231429,0,15-1212.00
+occupation:15-1212.00,skill:2.A.2.a,15-1212.00,2.A.2.a,Critical Thinking,0.456731,3.88,4.12,0.776,0.588571,1,15-1212.00
+occupation:15-1212.00,skill:2.A.2.b,15-1212.00,2.A.2.b,Active Learning,0.360286,3.25,3.88,0.65,0.554286,1,15-1212.00
+occupation:15-1212.00,skill:2.A.2.c,15-1212.00,2.A.2.c,Learning Strategies,0.256731,2.88,3.12,0.576,0.445714,0,15-1212.00
+occupation:15-1212.00,skill:2.A.2.d,15-1212.00,2.A.2.d,Monitoring,0.374697,3.38,3.88,0.676,0.554286,1,15-1212.00
+occupation:15-1212.00,skill:2.B.1.a,15-1212.00,2.B.1.a,Social Perceptiveness,0.216071,2.75,2.75,0.55,0.392857,0,15-1212.00
+occupation:15-1212.00,skill:2.B.1.b,15-1212.00,2.B.1.b,Coordination,0.257143,3.0,3.0,0.6,0.428571,0,15-1212.00
+occupation:15-1212.00,skill:2.B.1.c,15-1212.00,2.B.1.c,Persuasion,0.215589,2.62,2.88,0.524,0.411429,0,15-1212.00
+occupation:15-1212.00,skill:2.B.1.d,15-1212.00,2.B.1.d,Negotiation,0.205857,2.62,2.75,0.524,0.392857,0,15-1212.00
+occupation:15-1212.00,skill:2.B.1.e,15-1212.00,2.B.1.e,Instructing,0.256731,2.88,3.12,0.576,0.445714,0,15-1212.00
+occupation:15-1212.00,skill:2.B.1.f,15-1212.00,2.B.1.f,Service Orientation,0.226286,2.88,2.75,0.576,0.392857,0,15-1212.00
+occupation:15-1212.00,skill:2.B.2.i,15-1212.00,2.B.2.i,Complex Problem Solving,0.387857,3.75,3.62,0.75,0.517143,1,15-1212.00
+occupation:15-1212.00,skill:2.B.3.a,15-1212.00,2.B.3.a,Operations Analysis,0.178571,2.5,2.5,0.5,0.357143,0,15-1212.00
+occupation:15-1212.00,skill:2.B.3.b,15-1212.00,2.B.3.b,Technology Design,0.128411,2.12,2.12,0.424,0.302857,0,15-1212.00
+occupation:15-1212.00,skill:2.B.3.c,15-1212.00,2.B.3.c,Equipment Selection,0.05,1.75,1.0,0.35,0.142857,0,15-1212.00
+occupation:15-1212.00,skill:2.B.3.d,15-1212.00,2.B.3.d,Installation,0.021429,1.5,0.5,0.3,0.071429,0,15-1212.00
+occupation:15-1212.00,skill:2.B.3.e,15-1212.00,2.B.3.e,Programming,0.168429,2.62,2.25,0.524,0.321429,0,15-1212.00
+occupation:15-1212.00,skill:2.B.3.g,15-1212.00,2.B.3.g,Operations Monitoring,0.267429,3.0,3.12,0.6,0.445714,0,15-1212.00
+occupation:15-1212.00,skill:2.B.3.h,15-1212.00,2.B.3.h,Operation and Control,0.044,1.75,0.88,0.35,0.125714,0,15-1212.00
+occupation:15-1212.00,skill:2.B.3.j,15-1212.00,2.B.3.j,Equipment Maintenance,0.040731,1.62,0.88,0.324,0.125714,0,15-1212.00
+occupation:15-1212.00,skill:2.B.3.k,15-1212.00,2.B.3.k,Troubleshooting,0.113874,2.12,1.88,0.424,0.268571,0,15-1212.00
+occupation:15-1212.00,skill:2.B.3.l,15-1212.00,2.B.3.l,Repairing,0.034714,1.62,0.75,0.324,0.107143,0,15-1212.00
+occupation:15-1212.00,skill:2.B.3.m,15-1212.00,2.B.3.m,Quality Control Analysis,0.267429,3.0,3.12,0.6,0.445714,0,15-1212.00
+occupation:15-1212.00,skill:2.B.4.e,15-1212.00,2.B.4.e,Judgment and Decision Making,0.349589,3.38,3.62,0.676,0.517143,1,15-1212.00
+occupation:15-1212.00,skill:2.B.4.g,15-1212.00,2.B.4.g,Systems Analysis,0.326411,3.38,3.38,0.676,0.482857,1,15-1212.00
+occupation:15-1212.00,skill:2.B.4.h,15-1212.00,2.B.4.h,Systems Evaluation,0.289714,3.0,3.38,0.6,0.482857,1,15-1212.00
+occupation:15-1212.00,skill:2.B.5.a,15-1212.00,2.B.5.a,Time Management,0.278126,3.12,3.12,0.624,0.445714,0,15-1212.00
+occupation:15-1212.00,skill:2.B.5.b,15-1212.00,2.B.5.b,Management of Financial Resources,0.056,1.75,1.12,0.35,0.16,0,15-1212.00
+occupation:15-1212.00,skill:2.B.5.c,15-1212.00,2.B.5.c,Management of Material Resources,0.05,1.75,1.0,0.35,0.142857,0,15-1212.00
+occupation:15-1212.00,skill:2.B.5.d,15-1212.00,2.B.5.d,Management of Personnel Resources,0.236983,2.88,2.88,0.576,0.411429,0,15-1212.00
+occupation:15-1242.00,skill:2.A.1.a,15-1242.00,2.A.1.a,Reading Comprehension,0.455357,3.75,4.25,0.75,0.607143,1,15-1242.00
+occupation:15-1242.00,skill:2.A.1.b,15-1242.00,2.A.1.b,Active Listening,0.415714,3.75,3.88,0.75,0.554286,1,15-1242.00
+occupation:15-1242.00,skill:2.A.1.c,15-1242.00,2.A.1.c,Writing,0.360286,3.25,3.88,0.65,0.554286,1,15-1242.00
+occupation:15-1242.00,skill:2.A.1.d,15-1242.00,2.A.1.d,Speaking,0.374697,3.38,3.88,0.676,0.554286,1,15-1242.00
+occupation:15-1242.00,skill:2.A.1.e,15-1242.00,2.A.1.e,Mathematics,0.3,3.0,3.5,0.6,0.5,1,15-1242.00
+occupation:15-1242.00,skill:2.A.1.f,15-1242.00,2.A.1.f,Science,0.1,2.0,1.75,0.4,0.25,0,15-1242.00
+occupation:15-1242.00,skill:2.A.2.a,15-1242.00,2.A.2.a,Critical Thinking,0.443429,3.88,4.0,0.776,0.571429,1,15-1242.00
+occupation:15-1242.00,skill:2.A.2.b,15-1242.00,2.A.2.b,Active Learning,0.412,3.5,4.12,0.7,0.588571,1,15-1242.00
+occupation:15-1242.00,skill:2.A.2.c,15-1242.00,2.A.2.c,Learning Strategies,0.278571,3.0,3.25,0.6,0.464286,0,15-1242.00
+occupation:15-1242.00,skill:2.A.2.d,15-1242.00,2.A.2.d,Monitoring,0.360286,3.25,3.88,0.65,0.554286,1,15-1242.00
+occupation:15-1242.00,skill:2.B.1.a,15-1242.00,2.B.1.a,Social Perceptiveness,0.246857,2.88,3.0,0.576,0.428571,0,15-1242.00
+occupation:15-1242.00,skill:2.B.1.b,15-1242.00,2.B.1.b,Coordination,0.267429,3.0,3.12,0.6,0.445714,0,15-1242.00
+occupation:15-1242.00,skill:2.B.1.c,15-1242.00,2.B.1.c,Persuasion,0.205857,2.62,2.75,0.524,0.392857,0,15-1242.00
+occupation:15-1242.00,skill:2.B.1.d,15-1242.00,2.B.1.d,Negotiation,0.114286,2.0,2.0,0.4,0.285714,0,15-1242.00
+occupation:15-1242.00,skill:2.B.1.e,15-1242.00,2.B.1.e,Instructing,0.321429,3.0,3.75,0.6,0.535714,1,15-1242.00
+occupation:15-1242.00,skill:2.B.1.f,15-1242.00,2.B.1.f,Service Orientation,0.246857,2.88,3.0,0.576,0.428571,0,15-1242.00
+occupation:15-1242.00,skill:2.B.2.i,15-1242.00,2.B.2.i,Complex Problem Solving,0.456731,3.88,4.12,0.776,0.588571,1,15-1242.00
+occupation:15-1242.00,skill:2.B.3.a,15-1242.00,2.B.3.a,Operations Analysis,0.289714,3.12,3.25,0.624,0.464286,1,15-1242.00
+occupation:15-1242.00,skill:2.B.3.b,15-1242.00,2.B.3.b,Technology Design,0.16184,2.38,2.38,0.476,0.34,0,15-1242.00
+occupation:15-1242.00,skill:2.B.3.c,15-1242.00,2.B.3.c,Equipment Selection,0.037714,1.5,0.88,0.3,0.125714,0,15-1242.00
+occupation:15-1242.00,skill:2.B.3.d,15-1242.00,2.B.3.d,Installation,0.019714,1.38,0.5,0.276,0.071429,0,15-1242.00
+occupation:15-1242.00,skill:2.B.3.e,15-1242.00,2.B.3.e,Programming,0.374697,3.38,3.88,0.676,0.554286,1,15-1242.00
+occupation:15-1242.00,skill:2.B.3.g,15-1242.00,2.B.3.g,Operations Monitoring,0.226286,2.75,2.88,0.55,0.411429,0,15-1242.00
+occupation:15-1242.00,skill:2.B.3.h,15-1242.00,2.B.3.h,Operation and Control,0.037714,1.5,0.88,0.3,0.125714,0,15-1242.00
+occupation:15-1242.00,skill:2.B.3.j,15-1242.00,2.B.3.j,Equipment Maintenance,0.0,1.0,0.0,0.2,0.0,0,15-1242.00
+occupation:15-1242.00,skill:2.B.3.k,15-1242.00,2.B.3.k,Troubleshooting,0.178571,2.5,2.5,0.5,0.357143,0,15-1242.00
+occupation:15-1242.00,skill:2.B.3.l,15-1242.00,2.B.3.l,Repairing,0.00384,1.12,0.12,0.224,0.017143,0,15-1242.00
+occupation:15-1242.00,skill:2.B.3.m,15-1242.00,2.B.3.m,Quality Control Analysis,0.178571,2.5,2.5,0.5,0.357143,0,15-1242.00
+occupation:15-1242.00,skill:2.B.4.e,15-1242.00,2.B.4.e,Judgment and Decision Making,0.428571,3.75,4.0,0.75,0.571429,1,15-1242.00
+occupation:15-1242.00,skill:2.B.4.g,15-1242.00,2.B.4.g,Systems Analysis,0.345874,3.12,3.88,0.624,0.554286,1,15-1242.00
+occupation:15-1242.00,skill:2.B.4.h,15-1242.00,2.B.4.h,Systems Evaluation,0.356571,3.12,4.0,0.624,0.571429,1,15-1242.00
+occupation:15-1242.00,skill:2.B.5.a,15-1242.00,2.B.5.a,Time Management,0.236983,2.88,2.88,0.576,0.411429,0,15-1242.00
+occupation:15-1242.00,skill:2.B.5.b,15-1242.00,2.B.5.b,Management of Financial Resources,0.069,1.75,1.38,0.35,0.197143,0,15-1242.00
+occupation:15-1242.00,skill:2.B.5.c,15-1242.00,2.B.5.c,Management of Material Resources,0.087017,1.88,1.62,0.376,0.231429,0,15-1242.00
+occupation:15-1242.00,skill:2.B.5.d,15-1242.00,2.B.5.d,Management of Personnel Resources,0.235714,2.75,3.0,0.55,0.428571,0,15-1242.00
+occupation:15-1243.00,skill:2.A.1.a,15-1243.00,2.A.1.a,Reading Comprehension,0.456731,3.88,4.12,0.776,0.588571,1,15-1243.00
+occupation:15-1243.00,skill:2.A.1.b,15-1243.00,2.A.1.b,Active Listening,0.375,3.5,3.75,0.7,0.535714,1,15-1243.00
+occupation:15-1243.00,skill:2.A.1.c,15-1243.00,2.A.1.c,Writing,0.345874,3.12,3.88,0.624,0.554286,1,15-1243.00
+occupation:15-1243.00,skill:2.A.1.d,15-1243.00,2.A.1.d,Speaking,0.388,3.5,3.88,0.7,0.554286,1,15-1243.00
+occupation:15-1243.00,skill:2.A.1.e,15-1243.00,2.A.1.e,Mathematics,0.267429,3.0,3.12,0.6,0.445714,0,15-1243.00
+occupation:15-1243.00,skill:2.A.1.f,15-1243.00,2.A.1.f,Science,0.094,1.88,1.75,0.376,0.25,0,15-1243.00
+occupation:15-1243.00,skill:2.A.2.a,15-1243.00,2.A.2.a,Critical Thinking,0.430126,3.88,3.88,0.776,0.554286,1,15-1243.00
+occupation:15-1243.00,skill:2.A.2.b,15-1243.00,2.A.2.b,Active Learning,0.336143,3.25,3.62,0.65,0.517143,1,15-1243.00
+occupation:15-1243.00,skill:2.A.2.c,15-1243.00,2.A.2.c,Learning Strategies,0.246857,2.88,3.0,0.576,0.428571,0,15-1243.00
+occupation:15-1243.00,skill:2.A.2.d,15-1243.00,2.A.2.d,Monitoring,0.322697,3.12,3.62,0.624,0.517143,1,15-1243.00
+occupation:15-1243.00,skill:2.B.1.a,15-1243.00,2.B.1.a,Social Perceptiveness,0.257143,3.0,3.0,0.6,0.428571,0,15-1243.00
+occupation:15-1243.00,skill:2.B.1.b,15-1243.00,2.B.1.b,Coordination,0.267429,3.0,3.12,0.6,0.445714,0,15-1243.00
+occupation:15-1243.00,skill:2.B.1.c,15-1243.00,2.B.1.c,Persuasion,0.246857,2.88,3.0,0.576,0.428571,0,15-1243.00
+occupation:15-1243.00,skill:2.B.1.d,15-1243.00,2.B.1.d,Negotiation,0.215589,2.62,2.88,0.524,0.411429,0,15-1243.00
+occupation:15-1243.00,skill:2.B.1.e,15-1243.00,2.B.1.e,Instructing,0.297874,2.88,3.62,0.576,0.517143,1,15-1243.00
+occupation:15-1243.00,skill:2.B.1.f,15-1243.00,2.B.1.f,Service Orientation,0.257143,3.0,3.0,0.6,0.428571,0,15-1243.00
+occupation:15-1243.00,skill:2.B.2.i,15-1243.00,2.B.2.i,Complex Problem Solving,0.443429,3.88,4.0,0.776,0.571429,1,15-1243.00
+occupation:15-1243.00,skill:2.B.3.a,15-1243.00,2.B.3.a,Operations Analysis,0.301303,3.12,3.38,0.624,0.482857,1,15-1243.00
+occupation:15-1243.00,skill:2.B.3.b,15-1243.00,2.B.3.b,Technology Design,0.257143,3.0,3.0,0.6,0.428571,0,15-1243.00
+occupation:15-1243.00,skill:2.B.3.c,15-1243.00,2.B.3.c,Equipment Selection,0.034714,1.62,0.75,0.324,0.107143,0,15-1243.00
+occupation:15-1243.00,skill:2.B.3.d,15-1243.00,2.B.3.d,Installation,0.034714,1.62,0.75,0.324,0.107143,0,15-1243.00
+occupation:15-1243.00,skill:2.B.3.e,15-1243.00,2.B.3.e,Programming,0.397874,3.38,4.12,0.676,0.588571,1,15-1243.00
+occupation:15-1243.00,skill:2.B.3.g,15-1243.00,2.B.3.g,Operations Monitoring,0.128411,2.12,2.12,0.424,0.302857,0,15-1243.00
+occupation:15-1243.00,skill:2.B.3.h,15-1243.00,2.B.3.h,Operation and Control,0.069,1.75,1.38,0.35,0.197143,0,15-1243.00
+occupation:15-1243.00,skill:2.B.3.j,15-1243.00,2.B.3.j,Equipment Maintenance,0.00384,1.12,0.12,0.224,0.017143,0,15-1243.00
+occupation:15-1243.00,skill:2.B.3.k,15-1243.00,2.B.3.k,Troubleshooting,0.113874,1.88,2.12,0.376,0.302857,0,15-1243.00
+occupation:15-1243.00,skill:2.B.3.l,15-1243.00,2.B.3.l,Repairing,0.00384,1.12,0.12,0.224,0.017143,0,15-1243.00
+occupation:15-1243.00,skill:2.B.3.m,15-1243.00,2.B.3.m,Quality Control Analysis,0.107429,2.0,1.88,0.4,0.268571,0,15-1243.00
+occupation:15-1243.00,skill:2.B.4.e,15-1243.00,2.B.4.e,Judgment and Decision Making,0.430126,3.88,3.88,0.776,0.554286,1,15-1243.00
+occupation:15-1243.00,skill:2.B.4.g,15-1243.00,2.B.4.g,Systems Analysis,0.401786,3.75,3.75,0.75,0.535714,1,15-1243.00
+occupation:15-1243.00,skill:2.B.4.h,15-1243.00,2.B.4.h,Systems Evaluation,0.348214,3.25,3.75,0.65,0.535714,1,15-1243.00
+occupation:15-1243.00,skill:2.B.5.a,15-1243.00,2.B.5.a,Time Management,0.257143,3.0,3.0,0.6,0.428571,0,15-1243.00
+occupation:15-1243.00,skill:2.B.5.b,15-1243.00,2.B.5.b,Management of Financial Resources,0.071429,2.0,1.25,0.4,0.178571,0,15-1243.00
+occupation:15-1243.00,skill:2.B.5.c,15-1243.00,2.B.5.c,Management of Material Resources,0.071429,2.0,1.25,0.4,0.178571,0,15-1243.00
+occupation:15-1243.00,skill:2.B.5.d,15-1243.00,2.B.5.d,Management of Personnel Resources,0.196429,2.5,2.75,0.5,0.392857,0,15-1243.00
+occupation:15-1244.00,skill:2.A.1.a,15-1244.00,2.A.1.a,Reading Comprehension,0.443429,3.88,4.0,0.776,0.571429,1,15-1244.00
+occupation:15-1244.00,skill:2.A.1.b,15-1244.00,2.A.1.b,Active Listening,0.415714,3.75,3.88,0.75,0.554286,1,15-1244.00
+occupation:15-1244.00,skill:2.A.1.c,15-1244.00,2.A.1.c,Writing,0.334286,3.12,3.75,0.624,0.535714,1,15-1244.00
+occupation:15-1244.00,skill:2.A.1.d,15-1244.00,2.A.1.d,Speaking,0.374697,3.38,3.88,0.676,0.554286,1,15-1244.00
+occupation:15-1244.00,skill:2.A.1.e,15-1244.00,2.A.1.e,Mathematics,0.289714,3.0,3.38,0.6,0.482857,1,15-1244.00
+occupation:15-1244.00,skill:2.A.1.f,15-1244.00,2.A.1.f,Science,0.160714,2.25,2.5,0.45,0.357143,0,15-1244.00
+occupation:15-1244.00,skill:2.A.2.a,15-1244.00,2.A.2.a,Critical Thinking,0.430126,3.88,3.88,0.776,0.554286,1,15-1244.00
+occupation:15-1244.00,skill:2.A.2.b,15-1244.00,2.A.2.b,Active Learning,0.334286,3.12,3.75,0.624,0.535714,1,15-1244.00
+occupation:15-1244.00,skill:2.A.2.c,15-1244.00,2.A.2.c,Learning Strategies,0.284429,2.75,3.62,0.55,0.517143,1,15-1244.00
+occupation:15-1244.00,skill:2.A.2.d,15-1244.00,2.A.2.d,Monitoring,0.415714,3.75,3.88,0.75,0.554286,1,15-1244.00
+occupation:15-1244.00,skill:2.B.1.a,15-1244.00,2.B.1.a,Social Perceptiveness,0.257143,3.0,3.0,0.6,0.428571,0,15-1244.00
+occupation:15-1244.00,skill:2.B.1.b,15-1244.00,2.B.1.b,Coordination,0.257143,3.0,3.0,0.6,0.428571,0,15-1244.00
+occupation:15-1244.00,skill:2.B.1.c,15-1244.00,2.B.1.c,Persuasion,0.235714,2.75,3.0,0.55,0.428571,0,15-1244.00
+occupation:15-1244.00,skill:2.B.1.d,15-1244.00,2.B.1.d,Negotiation,0.205714,2.5,2.88,0.5,0.411429,0,15-1244.00
+occupation:15-1244.00,skill:2.B.1.e,15-1244.00,2.B.1.e,Instructing,0.297874,2.88,3.62,0.576,0.517143,1,15-1244.00
+occupation:15-1244.00,skill:2.B.1.f,15-1244.00,2.B.1.f,Service Orientation,0.257143,3.0,3.0,0.6,0.428571,0,15-1244.00
+occupation:15-1244.00,skill:2.B.2.i,15-1244.00,2.B.2.i,Complex Problem Solving,0.428571,3.75,4.0,0.75,0.571429,1,15-1244.00
+occupation:15-1244.00,skill:2.B.3.a,15-1244.00,2.B.3.a,Operations Analysis,0.289714,3.12,3.25,0.624,0.464286,1,15-1244.00
+occupation:15-1244.00,skill:2.B.3.b,15-1244.00,2.B.3.b,Technology Design,0.235714,2.75,3.0,0.55,0.428571,0,15-1244.00
+occupation:15-1244.00,skill:2.B.3.c,15-1244.00,2.B.3.c,Equipment Selection,0.267429,2.88,3.25,0.576,0.464286,0,15-1244.00
+occupation:15-1244.00,skill:2.B.3.d,15-1244.00,2.B.3.d,Installation,0.14416,2.38,2.12,0.476,0.302857,0,15-1244.00
+occupation:15-1244.00,skill:2.B.3.e,15-1244.00,2.B.3.e,Programming,0.401303,3.62,3.88,0.724,0.554286,1,15-1244.00
+occupation:15-1244.00,skill:2.B.3.g,15-1244.00,2.B.3.g,Operations Monitoring,0.362143,3.38,3.75,0.676,0.535714,1,15-1244.00
+occupation:15-1244.00,skill:2.B.3.h,15-1244.00,2.B.3.h,Operation and Control,0.310286,3.0,3.62,0.6,0.517143,1,15-1244.00
+occupation:15-1244.00,skill:2.B.3.j,15-1244.00,2.B.3.j,Equipment Maintenance,0.3,3.0,3.5,0.6,0.5,1,15-1244.00
+occupation:15-1244.00,skill:2.B.3.k,15-1244.00,2.B.3.k,Troubleshooting,0.428571,3.75,4.0,0.75,0.571429,1,15-1244.00
+occupation:15-1244.00,skill:2.B.3.l,15-1244.00,2.B.3.l,Repairing,0.267429,3.0,3.12,0.6,0.445714,0,15-1244.00
+occupation:15-1244.00,skill:2.B.3.m,15-1244.00,2.B.3.m,Quality Control Analysis,0.348214,3.25,3.75,0.65,0.535714,1,15-1244.00
+occupation:15-1244.00,skill:2.B.4.e,15-1244.00,2.B.4.e,Judgment and Decision Making,0.430126,3.88,3.88,0.776,0.554286,1,15-1244.00
+occupation:15-1244.00,skill:2.B.4.g,15-1244.00,2.B.4.g,Systems Analysis,0.430126,3.88,3.88,0.776,0.554286,1,15-1244.00
+occupation:15-1244.00,skill:2.B.4.h,15-1244.00,2.B.4.h,Systems Evaluation,0.441429,3.75,4.12,0.75,0.588571,1,15-1244.00
+occupation:15-1244.00,skill:2.B.5.a,15-1244.00,2.B.5.a,Time Management,0.334286,3.12,3.75,0.624,0.535714,1,15-1244.00
+occupation:15-1244.00,skill:2.B.5.b,15-1244.00,2.B.5.b,Management of Financial Resources,0.107429,2.0,1.88,0.4,0.268571,0,15-1244.00
+occupation:15-1244.00,skill:2.B.5.c,15-1244.00,2.B.5.c,Management of Material Resources,0.216071,2.75,2.75,0.55,0.392857,0,15-1244.00
+occupation:15-1244.00,skill:2.B.5.d,15-1244.00,2.B.5.d,Management of Personnel Resources,0.257143,3.0,3.0,0.6,0.428571,0,15-1244.00
+occupation:15-1251.00,skill:2.A.1.a,15-1251.00,2.A.1.a,Reading Comprehension,0.338,3.38,3.5,0.676,0.5,1,15-1251.00
+occupation:15-1251.00,skill:2.A.1.b,15-1251.00,2.A.1.b,Active Listening,0.428571,3.75,4.0,0.75,0.571429,1,15-1251.00
+occupation:15-1251.00,skill:2.A.1.c,15-1251.00,2.A.1.c,Writing,0.301786,3.25,3.25,0.65,0.464286,1,15-1251.00
+occupation:15-1251.00,skill:2.A.1.d,15-1251.00,2.A.1.d,Speaking,0.301303,3.12,3.38,0.624,0.482857,1,15-1251.00
+occupation:15-1251.00,skill:2.A.1.e,15-1251.00,2.A.1.e,Mathematics,0.278126,3.12,3.12,0.624,0.445714,0,15-1251.00
+occupation:15-1251.00,skill:2.A.1.f,15-1251.00,2.A.1.f,Science,0.216071,2.75,2.75,0.55,0.392857,0,15-1251.00
+occupation:15-1251.00,skill:2.A.2.a,15-1251.00,2.A.2.a,Critical Thinking,0.415714,3.75,3.88,0.75,0.554286,1,15-1251.00
+occupation:15-1251.00,skill:2.A.2.b,15-1251.00,2.A.2.b,Active Learning,0.289714,3.12,3.25,0.624,0.464286,1,15-1251.00
+occupation:15-1251.00,skill:2.A.2.c,15-1251.00,2.A.2.c,Learning Strategies,0.17816,2.38,2.62,0.476,0.374286,0,15-1251.00
+occupation:15-1251.00,skill:2.A.2.d,15-1251.00,2.A.2.d,Monitoring,0.267429,3.0,3.12,0.6,0.445714,0,15-1251.00
+occupation:15-1251.00,skill:2.B.1.a,15-1251.00,2.B.1.a,Social Perceptiveness,0.267429,3.12,3.0,0.624,0.428571,0,15-1251.00
+occupation:15-1251.00,skill:2.B.1.b,15-1251.00,2.B.1.b,Coordination,0.246857,3.0,2.88,0.6,0.411429,0,15-1251.00
+occupation:15-1251.00,skill:2.B.1.c,15-1251.00,2.B.1.c,Persuasion,0.205857,2.62,2.75,0.524,0.392857,0,15-1251.00
+occupation:15-1251.00,skill:2.B.1.d,15-1251.00,2.B.1.d,Negotiation,0.128411,2.12,2.12,0.424,0.302857,0,15-1251.00
+occupation:15-1251.00,skill:2.B.1.e,15-1251.00,2.B.1.e,Instructing,0.222857,2.5,3.12,0.5,0.445714,0,15-1251.00
+occupation:15-1251.00,skill:2.B.1.f,15-1251.00,2.B.1.f,Service Orientation,0.185143,2.25,2.88,0.45,0.411429,0,15-1251.00
+occupation:15-1251.00,skill:2.B.2.i,15-1251.00,2.B.2.i,Complex Problem Solving,0.415714,3.75,3.88,0.75,0.554286,1,15-1251.00
+occupation:15-1251.00,skill:2.B.3.a,15-1251.00,2.B.3.a,Operations Analysis,0.334286,3.12,3.75,0.624,0.535714,1,15-1251.00
+occupation:15-1251.00,skill:2.B.3.b,15-1251.00,2.B.3.b,Technology Design,0.187,2.75,2.38,0.55,0.34,0,15-1251.00
+occupation:15-1251.00,skill:2.B.3.c,15-1251.00,2.B.3.c,Equipment Selection,0.0,1.0,0.0,0.2,0.0,0,15-1251.00
+occupation:15-1251.00,skill:2.B.3.d,15-1251.00,2.B.3.d,Installation,0.013571,1.25,0.38,0.25,0.054286,0,15-1251.00
+occupation:15-1251.00,skill:2.B.3.e,15-1251.00,2.B.3.e,Programming,0.662286,4.75,4.88,0.95,0.697143,1,15-1251.00
+occupation:15-1251.00,skill:2.B.3.g,15-1251.00,2.B.3.g,Operations Monitoring,0.136286,2.25,2.12,0.45,0.302857,0,15-1251.00
+occupation:15-1251.00,skill:2.B.3.h,15-1251.00,2.B.3.h,Operation and Control,0.008,1.12,0.25,0.224,0.035714,0,15-1251.00
+occupation:15-1251.00,skill:2.B.3.j,15-1251.00,2.B.3.j,Equipment Maintenance,0.0,1.0,0.0,0.2,0.0,0,15-1251.00
+occupation:15-1251.00,skill:2.B.3.k,15-1251.00,2.B.3.k,Troubleshooting,0.104143,2.25,1.62,0.45,0.231429,0,15-1251.00
+occupation:15-1251.00,skill:2.B.3.l,15-1251.00,2.B.3.l,Repairing,0.0,1.0,0.0,0.2,0.0,0,15-1251.00
+occupation:15-1251.00,skill:2.B.3.m,15-1251.00,2.B.3.m,Quality Control Analysis,0.35,3.5,3.5,0.7,0.5,1,15-1251.00
+occupation:15-1251.00,skill:2.B.4.e,15-1251.00,2.B.4.e,Judgment and Decision Making,0.301786,3.25,3.25,0.65,0.464286,1,15-1251.00
+occupation:15-1251.00,skill:2.B.4.g,15-1251.00,2.B.4.g,Systems Analysis,0.313857,3.38,3.25,0.676,0.464286,1,15-1251.00
+occupation:15-1251.00,skill:2.B.4.h,15-1251.00,2.B.4.h,Systems Evaluation,0.322697,3.12,3.62,0.624,0.517143,1,15-1251.00
+occupation:15-1251.00,skill:2.B.5.a,15-1251.00,2.B.5.a,Time Management,0.278126,3.12,3.12,0.624,0.445714,0,15-1251.00
+occupation:15-1251.00,skill:2.B.5.b,15-1251.00,2.B.5.b,Management of Financial Resources,0.085714,2.0,1.5,0.4,0.214286,0,15-1251.00
+occupation:15-1251.00,skill:2.B.5.c,15-1251.00,2.B.5.c,Management of Material Resources,0.071429,2.0,1.25,0.4,0.178571,0,15-1251.00
+occupation:15-1251.00,skill:2.B.5.d,15-1251.00,2.B.5.d,Management of Personnel Resources,0.205857,2.62,2.75,0.524,0.392857,0,15-1251.00
+occupation:15-1252.00,skill:2.A.1.a,15-1252.00,2.A.1.a,Reading Comprehension,0.425,3.5,4.25,0.7,0.607143,1,15-1252.00
+occupation:15-1252.00,skill:2.A.1.b,15-1252.00,2.A.1.b,Active Listening,0.374697,3.38,3.88,0.676,0.554286,1,15-1252.00
+occupation:15-1252.00,skill:2.A.1.c,15-1252.00,2.A.1.c,Writing,0.336143,3.25,3.62,0.65,0.517143,1,15-1252.00
+occupation:15-1252.00,skill:2.A.1.d,15-1252.00,2.A.1.d,Speaking,0.322697,3.12,3.62,0.624,0.517143,1,15-1252.00
+occupation:15-1252.00,skill:2.A.1.e,15-1252.00,2.A.1.e,Mathematics,0.255357,2.75,3.25,0.55,0.464286,0,15-1252.00
+occupation:15-1252.00,skill:2.A.1.f,15-1252.00,2.A.1.f,Science,0.0,2.12,0.0,0.424,0.0,0,15-1252.00
+occupation:15-1252.00,skill:2.A.2.a,15-1252.00,2.A.2.a,Critical Thinking,0.456731,3.88,4.12,0.776,0.588571,1,15-1252.00
+occupation:15-1252.00,skill:2.A.2.b,15-1252.00,2.A.2.b,Active Learning,0.362,3.5,3.62,0.7,0.517143,1,15-1252.00
+occupation:15-1252.00,skill:2.A.2.c,15-1252.00,2.A.2.c,Learning Strategies,0.233554,2.62,3.12,0.524,0.445714,0,15-1252.00
+occupation:15-1252.00,skill:2.A.2.d,15-1252.00,2.A.2.d,Monitoring,0.3,3.0,3.5,0.6,0.5,1,15-1252.00
+occupation:15-1252.00,skill:2.B.1.a,15-1252.00,2.B.1.a,Social Perceptiveness,0.278126,2.88,3.38,0.576,0.482857,0,15-1252.00
+occupation:15-1252.00,skill:2.B.1.b,15-1252.00,2.B.1.b,Coordination,0.267429,3.0,3.12,0.6,0.445714,0,15-1252.00
+occupation:15-1252.00,skill:2.B.1.c,15-1252.00,2.B.1.c,Persuasion,0.245143,2.75,3.12,0.55,0.445714,0,15-1252.00
+occupation:15-1252.00,skill:2.B.1.d,15-1252.00,2.B.1.d,Negotiation,0.215589,2.62,2.88,0.524,0.411429,0,15-1252.00
+occupation:15-1252.00,skill:2.B.1.e,15-1252.00,2.B.1.e,Instructing,0.256731,2.88,3.12,0.576,0.445714,0,15-1252.00
+occupation:15-1252.00,skill:2.B.1.f,15-1252.00,2.B.1.f,Service Orientation,0.246857,2.88,3.0,0.576,0.428571,0,15-1252.00
+occupation:15-1252.00,skill:2.B.2.i,15-1252.00,2.B.2.i,Complex Problem Solving,0.338,3.38,3.5,0.676,0.5,1,15-1252.00
+occupation:15-1252.00,skill:2.B.3.a,15-1252.00,2.B.3.a,Operations Analysis,0.0,3.25,0.0,0.65,0.0,0,15-1252.00
+occupation:15-1252.00,skill:2.B.3.b,15-1252.00,2.B.3.b,Technology Design,0.349589,3.38,3.62,0.676,0.517143,1,15-1252.00
+occupation:15-1252.00,skill:2.B.3.c,15-1252.00,2.B.3.c,Equipment Selection,0.0,2.12,0.0,0.424,0.0,0,15-1252.00
+occupation:15-1252.00,skill:2.B.3.d,15-1252.00,2.B.3.d,Installation,0.053714,1.88,1.0,0.376,0.142857,0,15-1252.00
+occupation:15-1252.00,skill:2.B.3.e,15-1252.00,2.B.3.e,Programming,0.0,4.0,0.0,0.8,0.0,0,15-1252.00
+occupation:15-1252.00,skill:2.B.3.g,15-1252.00,2.B.3.g,Operations Monitoring,0.187,2.75,2.38,0.55,0.34,0,15-1252.00
+occupation:15-1252.00,skill:2.B.3.h,15-1252.00,2.B.3.h,Operation and Control,0.0,2.0,0.0,0.4,0.0,0,15-1252.00
+occupation:15-1252.00,skill:2.B.3.j,15-1252.00,2.B.3.j,Equipment Maintenance,0.008929,1.25,0.25,0.25,0.035714,0,15-1252.00
+occupation:15-1252.00,skill:2.B.3.k,15-1252.00,2.B.3.k,Troubleshooting,0.17816,2.62,2.38,0.524,0.34,0,15-1252.00
+occupation:15-1252.00,skill:2.B.3.l,15-1252.00,2.B.3.l,Repairing,0.008,1.12,0.25,0.224,0.035714,0,15-1252.00
+occupation:15-1252.00,skill:2.B.3.m,15-1252.00,2.B.3.m,Quality Control Analysis,0.0,2.75,0.0,0.55,0.0,0,15-1252.00
+occupation:15-1252.00,skill:2.B.4.e,15-1252.00,2.B.4.e,Judgment and Decision Making,0.387857,3.62,3.75,0.724,0.535714,1,15-1252.00
+occupation:15-1252.00,skill:2.B.4.g,15-1252.00,2.B.4.g,Systems Analysis,0.388,3.5,3.88,0.7,0.554286,1,15-1252.00
+occupation:15-1252.00,skill:2.B.4.h,15-1252.00,2.B.4.h,Systems Evaluation,0.397874,3.38,4.12,0.676,0.588571,1,15-1252.00
+occupation:15-1252.00,skill:2.B.5.a,15-1252.00,2.B.5.a,Time Management,0.289714,3.12,3.25,0.624,0.464286,1,15-1252.00
+occupation:15-1252.00,skill:2.B.5.b,15-1252.00,2.B.5.b,Management of Financial Resources,0.05,1.75,1.0,0.35,0.142857,0,15-1252.00
+occupation:15-1252.00,skill:2.B.5.c,15-1252.00,2.B.5.c,Management of Material Resources,0.046286,1.62,1.0,0.324,0.142857,0,15-1252.00
+occupation:15-1252.00,skill:2.B.5.d,15-1252.00,2.B.5.d,Management of Personnel Resources,0.168429,2.25,2.62,0.45,0.374286,0,15-1252.00
+occupation:15-1253.00,skill:2.A.1.a,15-1253.00,2.A.1.a,Reading Comprehension,0.470857,4.0,4.12,0.8,0.588571,1,15-1253.00
+occupation:15-1253.00,skill:2.A.1.b,15-1253.00,2.A.1.b,Active Listening,0.443429,3.88,4.0,0.776,0.571429,1,15-1253.00
+occupation:15-1253.00,skill:2.A.1.c,15-1253.00,2.A.1.c,Writing,0.415714,3.75,3.88,0.75,0.554286,1,15-1253.00
+occupation:15-1253.00,skill:2.A.1.d,15-1253.00,2.A.1.d,Speaking,0.443429,3.88,4.0,0.776,0.571429,1,15-1253.00
+occupation:15-1253.00,skill:2.A.1.e,15-1253.00,2.A.1.e,Mathematics,0.216071,2.75,2.75,0.55,0.392857,0,15-1253.00
+occupation:15-1253.00,skill:2.A.1.f,15-1253.00,2.A.1.f,Science,0.245143,2.75,3.12,0.55,0.445714,0,15-1253.00
+occupation:15-1253.00,skill:2.A.2.a,15-1253.00,2.A.2.a,Critical Thinking,0.430126,3.88,3.88,0.776,0.554286,1,15-1253.00
+occupation:15-1253.00,skill:2.A.2.b,15-1253.00,2.A.2.b,Active Learning,0.278126,3.12,3.12,0.624,0.445714,0,15-1253.00
+occupation:15-1253.00,skill:2.A.2.c,15-1253.00,2.A.2.c,Learning Strategies,0.246857,2.88,3.0,0.576,0.428571,0,15-1253.00
+occupation:15-1253.00,skill:2.A.2.d,15-1253.00,2.A.2.d,Monitoring,0.387857,3.62,3.75,0.724,0.535714,1,15-1253.00
+occupation:15-1253.00,skill:2.B.1.a,15-1253.00,2.B.1.a,Social Perceptiveness,0.236983,2.88,2.88,0.576,0.411429,0,15-1253.00
+occupation:15-1253.00,skill:2.B.1.b,15-1253.00,2.B.1.b,Coordination,0.257143,3.0,3.0,0.6,0.428571,0,15-1253.00
+occupation:15-1253.00,skill:2.B.1.c,15-1253.00,2.B.1.c,Persuasion,0.187143,2.5,2.62,0.5,0.374286,0,15-1253.00
+occupation:15-1253.00,skill:2.B.1.d,15-1253.00,2.B.1.d,Negotiation,0.128411,2.12,2.12,0.424,0.302857,0,15-1253.00
+occupation:15-1253.00,skill:2.B.1.e,15-1253.00,2.B.1.e,Instructing,0.215589,2.62,2.88,0.524,0.411429,0,15-1253.00
+occupation:15-1253.00,skill:2.B.1.f,15-1253.00,2.B.1.f,Service Orientation,0.196429,2.5,2.75,0.5,0.392857,0,15-1253.00
+occupation:15-1253.00,skill:2.B.2.i,15-1253.00,2.B.2.i,Complex Problem Solving,0.301303,3.38,3.12,0.676,0.445714,1,15-1253.00
+occupation:15-1253.00,skill:2.B.3.a,15-1253.00,2.B.3.a,Operations Analysis,0.301303,3.12,3.38,0.624,0.482857,1,15-1253.00
+occupation:15-1253.00,skill:2.B.3.b,15-1253.00,2.B.3.b,Technology Design,0.196126,2.62,2.62,0.524,0.374286,0,15-1253.00
+occupation:15-1253.00,skill:2.B.3.c,15-1253.00,2.B.3.c,Equipment Selection,0.056,1.75,1.12,0.35,0.16,0,15-1253.00
+occupation:15-1253.00,skill:2.B.3.d,15-1253.00,2.B.3.d,Installation,0.1,2.0,1.75,0.4,0.25,0,15-1253.00
+occupation:15-1253.00,skill:2.B.3.e,15-1253.00,2.B.3.e,Programming,0.387857,3.62,3.75,0.724,0.535714,1,15-1253.00
+occupation:15-1253.00,skill:2.B.3.g,15-1253.00,2.B.3.g,Operations Monitoring,0.224571,3.0,2.62,0.6,0.374286,0,15-1253.00
+occupation:15-1253.00,skill:2.B.3.h,15-1253.00,2.B.3.h,Operation and Control,0.074126,1.88,1.38,0.376,0.197143,0,15-1253.00
+occupation:15-1253.00,skill:2.B.3.j,15-1253.00,2.B.3.j,Equipment Maintenance,0.0,1.0,0.0,0.2,0.0,0,15-1253.00
+occupation:15-1253.00,skill:2.B.3.k,15-1253.00,2.B.3.k,Troubleshooting,0.246857,2.88,3.0,0.576,0.428571,0,15-1253.00
+occupation:15-1253.00,skill:2.B.3.l,15-1253.00,2.B.3.l,Repairing,0.00384,1.12,0.12,0.224,0.017143,0,15-1253.00
+occupation:15-1253.00,skill:2.B.3.m,15-1253.00,2.B.3.m,Quality Control Analysis,0.349589,3.38,3.62,0.676,0.517143,1,15-1253.00
+occupation:15-1253.00,skill:2.B.4.e,15-1253.00,2.B.4.e,Judgment and Decision Making,0.322697,3.12,3.62,0.624,0.517143,1,15-1253.00
+occupation:15-1253.00,skill:2.B.4.g,15-1253.00,2.B.4.g,Systems Analysis,0.267429,3.12,3.0,0.624,0.428571,0,15-1253.00
+occupation:15-1253.00,skill:2.B.4.h,15-1253.00,2.B.4.h,Systems Evaluation,0.325,3.25,3.5,0.65,0.5,1,15-1253.00
+occupation:15-1253.00,skill:2.B.5.a,15-1253.00,2.B.5.a,Time Management,0.257143,3.0,3.0,0.6,0.428571,0,15-1253.00
+occupation:15-1253.00,skill:2.B.5.b,15-1253.00,2.B.5.b,Management of Financial Resources,0.026571,1.5,0.62,0.3,0.088571,0,15-1253.00
+occupation:15-1253.00,skill:2.B.5.c,15-1253.00,2.B.5.c,Management of Material Resources,0.026571,1.5,0.62,0.3,0.088571,0,15-1253.00
+occupation:15-1253.00,skill:2.B.5.d,15-1253.00,2.B.5.d,Management of Personnel Resources,0.121143,2.12,2.0,0.424,0.285714,0,15-1253.00
+occupation:15-1254.00,skill:2.A.1.a,15-1254.00,2.A.1.a,Reading Comprehension,0.413714,3.62,4.0,0.724,0.571429,1,15-1254.00
+occupation:15-1254.00,skill:2.A.1.b,15-1254.00,2.A.1.b,Active Listening,0.35,3.5,3.5,0.7,0.5,1,15-1254.00
+occupation:15-1254.00,skill:2.A.1.c,15-1254.00,2.A.1.c,Writing,0.312,3.12,3.5,0.624,0.5,1,15-1254.00
+occupation:15-1254.00,skill:2.A.1.d,15-1254.00,2.A.1.d,Speaking,0.301786,3.25,3.25,0.65,0.464286,1,15-1254.00
+occupation:15-1254.00,skill:2.A.1.e,15-1254.00,2.A.1.e,Mathematics,0.226286,2.75,2.88,0.55,0.411429,0,15-1254.00
+occupation:15-1254.00,skill:2.A.1.f,15-1254.00,2.A.1.f,Science,0.128571,2.0,2.25,0.4,0.321429,0,15-1254.00
+occupation:15-1254.00,skill:2.A.2.a,15-1254.00,2.A.2.a,Critical Thinking,0.415714,3.75,3.88,0.75,0.554286,1,15-1254.00
+occupation:15-1254.00,skill:2.A.2.b,15-1254.00,2.A.2.b,Active Learning,0.362,3.5,3.62,0.7,0.517143,1,15-1254.00
+occupation:15-1254.00,skill:2.A.2.c,15-1254.00,2.A.2.c,Learning Strategies,0.256731,2.88,3.12,0.576,0.445714,0,15-1254.00
+occupation:15-1254.00,skill:2.A.2.d,15-1254.00,2.A.2.d,Monitoring,0.289714,3.0,3.38,0.6,0.482857,1,15-1254.00
+occupation:15-1254.00,skill:2.B.1.a,15-1254.00,2.B.1.a,Social Perceptiveness,0.226286,2.88,2.75,0.576,0.392857,0,15-1254.00
+occupation:15-1254.00,skill:2.B.1.b,15-1254.00,2.B.1.b,Coordination,0.257143,3.0,3.0,0.6,0.428571,0,15-1254.00
+occupation:15-1254.00,skill:2.B.1.c,15-1254.00,2.B.1.c,Persuasion,0.256731,2.88,3.12,0.576,0.445714,0,15-1254.00
+occupation:15-1254.00,skill:2.B.1.d,15-1254.00,2.B.1.d,Negotiation,0.216071,2.75,2.75,0.55,0.392857,0,15-1254.00
+occupation:15-1254.00,skill:2.B.1.e,15-1254.00,2.B.1.e,Instructing,0.255357,2.75,3.25,0.55,0.464286,0,15-1254.00
+occupation:15-1254.00,skill:2.B.1.f,15-1254.00,2.B.1.f,Service Orientation,0.236983,2.88,2.88,0.576,0.411429,0,15-1254.00
+occupation:15-1254.00,skill:2.B.2.i,15-1254.00,2.B.2.i,Complex Problem Solving,0.374411,3.62,3.62,0.724,0.517143,1,15-1254.00
+occupation:15-1254.00,skill:2.B.3.a,15-1254.00,2.B.3.a,Operations Analysis,0.413714,3.62,4.0,0.724,0.571429,1,15-1254.00
+occupation:15-1254.00,skill:2.B.3.b,15-1254.00,2.B.3.b,Technology Design,0.17,2.5,2.38,0.5,0.34,0,15-1254.00
+occupation:15-1254.00,skill:2.B.3.c,15-1254.00,2.B.3.c,Equipment Selection,0.114286,2.0,2.0,0.4,0.285714,0,15-1254.00
+occupation:15-1254.00,skill:2.B.3.d,15-1254.00,2.B.3.d,Installation,0.017857,1.25,0.5,0.25,0.071429,0,15-1254.00
+occupation:15-1254.00,skill:2.B.3.e,15-1254.00,2.B.3.e,Programming,0.500286,4.12,4.25,0.824,0.607143,1,15-1254.00
+occupation:15-1254.00,skill:2.B.3.g,15-1254.00,2.B.3.g,Operations Monitoring,0.136286,2.25,2.12,0.45,0.302857,0,15-1254.00
+occupation:15-1254.00,skill:2.B.3.h,15-1254.00,2.B.3.h,Operation and Control,0.028697,1.62,0.62,0.324,0.088571,0,15-1254.00
+occupation:15-1254.00,skill:2.B.3.j,15-1254.00,2.B.3.j,Equipment Maintenance,0.0,1.0,0.0,0.2,0.0,0,15-1254.00
+occupation:15-1254.00,skill:2.B.3.k,15-1254.00,2.B.3.k,Troubleshooting,0.158697,2.12,2.62,0.424,0.374286,0,15-1254.00
+occupation:15-1254.00,skill:2.B.3.l,15-1254.00,2.B.3.l,Repairing,0.0,1.0,0.0,0.2,0.0,0,15-1254.00
+occupation:15-1254.00,skill:2.B.3.m,15-1254.00,2.B.3.m,Quality Control Analysis,0.216071,2.75,2.75,0.55,0.392857,0,15-1254.00
+occupation:15-1254.00,skill:2.B.4.e,15-1254.00,2.B.4.e,Judgment and Decision Making,0.326411,3.38,3.38,0.676,0.482857,1,15-1254.00
+occupation:15-1254.00,skill:2.B.4.g,15-1254.00,2.B.4.g,Systems Analysis,0.301303,3.12,3.38,0.624,0.482857,1,15-1254.00
+occupation:15-1254.00,skill:2.B.4.h,15-1254.00,2.B.4.h,Systems Evaluation,0.278571,3.0,3.25,0.6,0.464286,0,15-1254.00
+occupation:15-1254.00,skill:2.B.5.a,15-1254.00,2.B.5.a,Time Management,0.246857,3.0,2.88,0.6,0.411429,0,15-1254.00
+occupation:15-1254.00,skill:2.B.5.b,15-1254.00,2.B.5.b,Management of Financial Resources,0.0625,1.75,1.25,0.35,0.178571,0,15-1254.00
+occupation:15-1254.00,skill:2.B.5.c,15-1254.00,2.B.5.c,Management of Material Resources,0.075,1.75,1.5,0.35,0.214286,0,15-1254.00
+occupation:15-1254.00,skill:2.B.5.d,15-1254.00,2.B.5.d,Management of Personnel Resources,0.153,2.38,2.25,0.476,0.321429,0,15-1254.00
+occupation:15-1255.00,skill:2.A.1.a,15-1255.00,2.A.1.a,Reading Comprehension,0.428571,3.75,4.0,0.75,0.571429,1,15-1255.01
+occupation:15-1255.00,skill:2.A.1.b,15-1255.00,2.A.1.b,Active Listening,0.430126,3.88,3.88,0.776,0.554286,1,15-1255.01
+occupation:15-1255.00,skill:2.A.1.c,15-1255.00,2.A.1.c,Writing,0.360286,3.25,3.88,0.65,0.554286,1,15-1255.01
+occupation:15-1255.00,skill:2.A.1.d,15-1255.00,2.A.1.d,Speaking,0.345874,3.12,3.88,0.624,0.554286,1,15-1255.01
+occupation:15-1255.00,skill:2.A.1.e,15-1255.00,2.A.1.e,Mathematics,0.256731,2.88,3.12,0.576,0.445714,0,15-1255.01
+occupation:15-1255.00,skill:2.A.1.f,15-1255.00,2.A.1.f,Science,0.019714,1.38,0.5,0.276,0.071429,0,15-1255.01
+occupation:15-1255.00,skill:2.A.2.a,15-1255.00,2.A.2.a,Critical Thinking,0.415714,3.75,3.88,0.75,0.554286,1,15-1255.01
+occupation:15-1255.00,skill:2.A.2.b,15-1255.00,2.A.2.b,Active Learning,0.362,3.5,3.62,0.7,0.517143,1,15-1255.01
+occupation:15-1255.00,skill:2.A.2.c,15-1255.00,2.A.2.c,Learning Strategies,0.246857,2.88,3.0,0.576,0.428571,0,15-1255.01
+occupation:15-1255.00,skill:2.A.2.d,15-1255.00,2.A.2.d,Monitoring,0.322697,3.12,3.62,0.624,0.517143,1,15-1255.01
+occupation:15-1255.00,skill:2.B.1.a,15-1255.00,2.B.1.a,Social Perceptiveness,0.267429,3.0,3.12,0.6,0.445714,0,15-1255.01
+occupation:15-1255.00,skill:2.B.1.b,15-1255.00,2.B.1.b,Coordination,0.312,3.12,3.5,0.624,0.5,1,15-1255.01
+occupation:15-1255.00,skill:2.B.1.c,15-1255.00,2.B.1.c,Persuasion,0.267429,3.0,3.12,0.6,0.445714,0,15-1255.01
+occupation:15-1255.00,skill:2.B.1.d,15-1255.00,2.B.1.d,Negotiation,0.257143,3.0,3.0,0.6,0.428571,0,15-1255.01
+occupation:15-1255.00,skill:2.B.1.e,15-1255.00,2.B.1.e,Instructing,0.267429,2.88,3.25,0.576,0.464286,0,15-1255.01
+occupation:15-1255.00,skill:2.B.1.f,15-1255.00,2.B.1.f,Service Orientation,0.216071,2.75,2.75,0.55,0.392857,0,15-1255.01
+occupation:15-1255.00,skill:2.B.2.i,15-1255.00,2.B.2.i,Complex Problem Solving,0.401303,3.62,3.88,0.724,0.554286,1,15-1255.01
+occupation:15-1255.00,skill:2.B.3.a,15-1255.00,2.B.3.a,Operations Analysis,0.257143,3.0,3.0,0.6,0.428571,0,15-1255.01
+occupation:15-1255.00,skill:2.B.3.b,15-1255.00,2.B.3.b,Technology Design,0.257143,3.0,3.0,0.6,0.428571,0,15-1255.01
+occupation:15-1255.00,skill:2.B.3.c,15-1255.00,2.B.3.c,Equipment Selection,0.00384,1.12,0.12,0.224,0.017143,0,15-1255.01
+occupation:15-1255.00,skill:2.B.3.d,15-1255.00,2.B.3.d,Installation,0.00384,1.12,0.12,0.224,0.017143,0,15-1255.01
+occupation:15-1255.00,skill:2.B.3.e,15-1255.00,2.B.3.e,Programming,0.443429,4.0,3.88,0.8,0.554286,1,15-1255.01
+occupation:15-1255.00,skill:2.B.3.g,15-1255.00,2.B.3.g,Operations Monitoring,0.160714,2.25,2.5,0.45,0.357143,0,15-1255.01
+occupation:15-1255.00,skill:2.B.3.h,15-1255.00,2.B.3.h,Operation and Control,0.0,1.0,0.0,0.2,0.0,0,15-1255.01
+occupation:15-1255.00,skill:2.B.3.j,15-1255.00,2.B.3.j,Equipment Maintenance,0.0,1.0,0.0,0.2,0.0,0,15-1255.01
+occupation:15-1255.00,skill:2.B.3.k,15-1255.00,2.B.3.k,Troubleshooting,0.00384,1.12,0.12,0.224,0.017143,0,15-1255.01
+occupation:15-1255.00,skill:2.B.3.l,15-1255.00,2.B.3.l,Repairing,0.0,1.0,0.0,0.2,0.0,0,15-1255.01
+occupation:15-1255.00,skill:2.B.3.m,15-1255.00,2.B.3.m,Quality Control Analysis,0.107429,2.0,1.88,0.4,0.268571,0,15-1255.01
+occupation:15-1255.00,skill:2.B.4.e,15-1255.00,2.B.4.e,Judgment and Decision Making,0.374411,3.62,3.62,0.724,0.517143,1,15-1255.01
+occupation:15-1255.00,skill:2.B.4.g,15-1255.00,2.B.4.g,Systems Analysis,0.313857,3.38,3.25,0.676,0.464286,1,15-1255.01
+occupation:15-1255.00,skill:2.B.4.h,15-1255.00,2.B.4.h,Systems Evaluation,0.336143,3.25,3.62,0.65,0.517143,1,15-1255.01
+occupation:15-1255.00,skill:2.B.5.a,15-1255.00,2.B.5.a,Time Management,0.338,3.38,3.5,0.676,0.5,1,15-1255.01
+occupation:15-1255.00,skill:2.B.5.b,15-1255.00,2.B.5.b,Management of Financial Resources,0.074126,1.88,1.38,0.376,0.197143,0,15-1255.01
+occupation:15-1255.00,skill:2.B.5.c,15-1255.00,2.B.5.c,Management of Material Resources,0.080571,1.88,1.5,0.376,0.214286,0,15-1255.01
+occupation:15-1255.00,skill:2.B.5.d,15-1255.00,2.B.5.d,Management of Personnel Resources,0.235714,2.75,3.0,0.55,0.428571,0,15-1255.01
+occupation:15-2031.00,skill:2.A.1.a,15-2031.00,2.A.1.a,Reading Comprehension,0.485714,4.0,4.25,0.8,0.607143,1,15-2031.00
+occupation:15-2031.00,skill:2.A.1.b,15-2031.00,2.A.1.b,Active Listening,0.457143,4.0,4.0,0.8,0.571429,1,15-2031.00
+occupation:15-2031.00,skill:2.A.1.c,15-2031.00,2.A.1.c,Writing,0.457143,4.0,4.0,0.8,0.571429,1,15-2031.00
+occupation:15-2031.00,skill:2.A.1.d,15-2031.00,2.A.1.d,Speaking,0.457143,4.0,4.0,0.8,0.571429,1,15-2031.00
+occupation:15-2031.00,skill:2.A.1.e,15-2031.00,2.A.1.e,Mathematics,0.627429,4.5,4.88,0.9,0.697143,1,15-2031.00
+occupation:15-2031.00,skill:2.A.1.f,15-2031.00,2.A.1.f,Science,0.301786,3.25,3.25,0.65,0.464286,1,15-2031.00
+occupation:15-2031.00,skill:2.A.2.a,15-2031.00,2.A.2.a,Critical Thinking,0.470857,4.0,4.12,0.8,0.588571,1,15-2031.00
+occupation:15-2031.00,skill:2.A.2.b,15-2031.00,2.A.2.b,Active Learning,0.456731,3.88,4.12,0.776,0.588571,1,15-2031.00
+occupation:15-2031.00,skill:2.A.2.c,15-2031.00,2.A.2.c,Learning Strategies,0.257143,3.0,3.0,0.6,0.428571,0,15-2031.00
+occupation:15-2031.00,skill:2.A.2.d,15-2031.00,2.A.2.d,Monitoring,0.256731,2.88,3.12,0.576,0.445714,0,15-2031.00
+occupation:15-2031.00,skill:2.B.1.a,15-2031.00,2.B.1.a,Social Perceptiveness,0.236983,2.88,2.88,0.576,0.411429,0,15-2031.00
+occupation:15-2031.00,skill:2.B.1.b,15-2031.00,2.B.1.b,Coordination,0.278126,3.12,3.12,0.624,0.445714,0,15-2031.00
+occupation:15-2031.00,skill:2.B.1.c,15-2031.00,2.B.1.c,Persuasion,0.256731,2.88,3.12,0.576,0.445714,0,15-2031.00
+occupation:15-2031.00,skill:2.B.1.d,15-2031.00,2.B.1.d,Negotiation,0.14416,2.12,2.38,0.424,0.34,0,15-2031.00
+occupation:15-2031.00,skill:2.B.1.e,15-2031.00,2.B.1.e,Instructing,0.257143,3.0,3.0,0.6,0.428571,0,15-2031.00
+occupation:15-2031.00,skill:2.B.1.f,15-2031.00,2.B.1.f,Service Orientation,0.226286,2.75,2.88,0.55,0.411429,0,15-2031.00
+occupation:15-2031.00,skill:2.B.2.i,15-2031.00,2.B.2.i,Complex Problem Solving,0.529714,4.12,4.5,0.824,0.642857,1,15-2031.00
+occupation:15-2031.00,skill:2.B.3.a,15-2031.00,2.B.3.a,Operations Analysis,0.455357,3.75,4.25,0.75,0.607143,1,15-2031.00
+occupation:15-2031.00,skill:2.B.3.b,15-2031.00,2.B.3.b,Technology Design,0.056,1.75,1.12,0.35,0.16,0,15-2031.00
+occupation:15-2031.00,skill:2.B.3.c,15-2031.00,2.B.3.c,Equipment Selection,0.0,1.0,0.0,0.2,0.0,0,15-2031.00
+occupation:15-2031.00,skill:2.B.3.d,15-2031.00,2.B.3.d,Installation,0.0,1.0,0.0,0.2,0.0,0,15-2031.00
+occupation:15-2031.00,skill:2.B.3.e,15-2031.00,2.B.3.e,Programming,0.205857,2.62,2.75,0.524,0.392857,0,15-2031.00
+occupation:15-2031.00,skill:2.B.3.g,15-2031.00,2.B.3.g,Operations Monitoring,0.067143,1.88,1.25,0.376,0.178571,0,15-2031.00
+occupation:15-2031.00,skill:2.B.3.h,15-2031.00,2.B.3.h,Operation and Control,0.00384,1.12,0.12,0.224,0.017143,0,15-2031.00
+occupation:15-2031.00,skill:2.B.3.j,15-2031.00,2.B.3.j,Equipment Maintenance,0.0,1.0,0.0,0.2,0.0,0,15-2031.00
+occupation:15-2031.00,skill:2.B.3.k,15-2031.00,2.B.3.k,Troubleshooting,0.008929,1.25,0.25,0.25,0.035714,0,15-2031.00
+occupation:15-2031.00,skill:2.B.3.l,15-2031.00,2.B.3.l,Repairing,0.0,1.0,0.0,0.2,0.0,0,15-2031.00
+occupation:15-2031.00,skill:2.B.3.m,15-2031.00,2.B.3.m,Quality Control Analysis,0.074126,1.88,1.38,0.376,0.197143,0,15-2031.00
+occupation:15-2031.00,skill:2.B.4.e,15-2031.00,2.B.4.e,Judgment and Decision Making,0.485554,3.88,4.38,0.776,0.625714,1,15-2031.00
+occupation:15-2031.00,skill:2.B.4.g,15-2031.00,2.B.4.g,Systems Analysis,0.430126,3.88,3.88,0.776,0.554286,1,15-2031.00
+occupation:15-2031.00,skill:2.B.4.h,15-2031.00,2.B.4.h,Systems Evaluation,0.471143,3.88,4.25,0.776,0.607143,1,15-2031.00
+occupation:15-2031.00,skill:2.B.5.a,15-2031.00,2.B.5.a,Time Management,0.267429,3.12,3.0,0.624,0.428571,0,15-2031.00
+occupation:15-2031.00,skill:2.B.5.b,15-2031.00,2.B.5.b,Management of Financial Resources,0.074126,1.88,1.38,0.376,0.197143,0,15-2031.00
+occupation:15-2031.00,skill:2.B.5.c,15-2031.00,2.B.5.c,Management of Material Resources,0.067143,1.88,1.25,0.376,0.178571,0,15-2031.00
+occupation:15-2031.00,skill:2.B.5.d,15-2031.00,2.B.5.d,Management of Personnel Resources,0.196126,2.62,2.62,0.524,0.374286,0,15-2031.00
+occupation:15-2051.00,skill:2.A.1.a,15-2051.00,2.A.1.a,Reading Comprehension,0.478429,3.94,4.25,0.788,0.607143,1,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.A.1.b,15-2051.00,2.A.1.b,Active Listening,0.436777,3.88,3.94,0.776,0.562857,1,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.A.1.c,15-2051.00,2.A.1.c,Writing,0.428571,3.75,4.0,0.75,0.571429,1,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.A.1.d,15-2051.00,2.A.1.d,Speaking,0.443429,3.88,4.0,0.776,0.571429,1,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.A.1.e,15-2051.00,2.A.1.e,Mathematics,0.388,3.5,3.88,0.7,0.554286,1,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.A.1.f,15-2051.00,2.A.1.f,Science,0.085714,2.0,1.5,0.4,0.214286,0,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.A.2.a,15-2051.00,2.A.2.a,Critical Thinking,0.478429,3.94,4.25,0.788,0.607143,1,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.A.2.b,15-2051.00,2.A.2.b,Active Learning,0.435,3.75,4.06,0.75,0.58,1,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.A.2.c,15-2051.00,2.A.2.c,Learning Strategies,0.2625,2.94,3.125,0.588,0.446429,0,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.A.2.d,15-2051.00,2.A.2.d,Monitoring,0.354813,3.37,3.685,0.674,0.526429,1,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.B.1.a,15-2051.00,2.B.1.a,Social Perceptiveness,0.273429,3.0,3.19,0.6,0.455714,0,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.B.1.b,15-2051.00,2.B.1.b,Coordination,0.290746,3.19,3.19,0.638,0.455714,1,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.B.1.c,15-2051.00,2.B.1.c,Persuasion,0.226004,2.815,2.81,0.563,0.401429,0,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.B.1.d,15-2051.00,2.B.1.d,Negotiation,0.187857,2.5,2.63,0.5,0.375714,0,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.B.1.e,15-2051.00,2.B.1.e,Instructing,0.289286,3.0,3.375,0.6,0.482143,1,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.B.1.f,15-2051.00,2.B.1.f,Service Orientation,0.221179,2.815,2.75,0.563,0.392857,0,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.B.2.i,15-2051.00,2.B.2.i,Complex Problem Solving,0.362183,3.44,3.685,0.688,0.526429,1,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.B.3.a,15-2051.00,2.B.3.a,Operations Analysis,0.165357,2.315,2.5,0.463,0.357143,0,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.B.3.b,15-2051.00,2.B.3.b,Technology Design,0.054401,1.685,1.13,0.337,0.161429,0,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.B.3.c,15-2051.00,2.B.3.c,Equipment Selection,0.030857,1.44,0.75,0.288,0.107143,0,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.B.3.d,15-2051.00,2.B.3.d,Installation,0.0,1.0,0.0,0.2,0.0,0,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.B.3.e,15-2051.00,2.B.3.e,Programming,0.251357,2.875,3.06,0.575,0.437143,0,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.B.3.g,15-2051.00,2.B.3.g,Operations Monitoring,0.086246,1.935,1.56,0.387,0.222857,0,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.B.3.h,15-2051.00,2.B.3.h,Operation and Control,0.036442,1.565,0.815,0.313,0.116429,0,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.B.3.j,15-2051.00,2.B.3.j,Equipment Maintenance,0.0,1.0,0.0,0.2,0.0,0,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.B.3.k,15-2051.00,2.B.3.k,Troubleshooting,0.011603,1.31,0.31,0.262,0.044286,0,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.B.3.l,15-2051.00,2.B.3.l,Repairing,0.0,1.0,0.0,0.2,0.0,0,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.B.3.m,15-2051.00,2.B.3.m,Quality Control Analysis,0.128571,2.25,2.0,0.45,0.285714,0,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.B.4.e,15-2051.00,2.B.4.e,Judgment and Decision Making,0.373924,3.435,3.81,0.687,0.544286,1,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.B.4.g,15-2051.00,2.B.4.g,Systems Analysis,0.324415,3.185,3.565,0.637,0.509286,1,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.B.4.h,15-2051.00,2.B.4.h,Systems Evaluation,0.317794,3.12,3.565,0.624,0.509286,1,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.B.5.a,15-2051.00,2.B.5.a,Time Management,0.301786,3.25,3.25,0.65,0.464286,1,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.B.5.b,15-2051.00,2.B.5.b,Management of Financial Resources,0.080571,1.88,1.5,0.376,0.214286,0,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.B.5.c,15-2051.00,2.B.5.c,Management of Material Resources,0.071304,1.815,1.375,0.363,0.196429,0,"15-2051.01,15-2051.02"
+occupation:15-2051.00,skill:2.B.5.d,15-2051.00,2.B.5.d,Management of Personnel Resources,0.196754,2.56,2.69,0.512,0.384286,0,"15-2051.01,15-2051.02"

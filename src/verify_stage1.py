@@ -67,6 +67,30 @@ def _web_contract_report(root: Path) -> dict[str, Any]:
     return {"ok": not missing and routes_ok, "required_files": [str(path.relative_to(root)) for path in required], "missing_files": missing, "routes_ok": routes_ok}
 
 
+def _bipartite_graph_report(root: Path) -> dict[str, Any]:
+    try:
+        from bipartite_graph import build_bipartite_graph
+    except ModuleNotFoundError:
+        from src.bipartite_graph import build_bipartite_graph
+    try:
+        graph = build_bipartite_graph(root / "data" / "clean", min_demand_weight=0.30)
+        return {
+            "ok": graph["summary"]["occupation_count"] > 0
+            and graph["summary"]["skill_count"] > 0
+            and graph["summary"]["edge_count"] > 0
+            and graph["summary"]["isolated_occupation_count"] == 0
+            and graph["summary"]["isolated_skill_count"] == 0,
+            "occupation_count": graph["summary"]["occupation_count"],
+            "skill_count": graph["summary"]["skill_count"],
+            "edge_count": graph["summary"]["edge_count"],
+            "display_edge_count": graph["filtered_edge_count"],
+            "isolated_occupation_count": graph["summary"]["isolated_occupation_count"],
+            "isolated_skill_count": graph["summary"]["isolated_skill_count"],
+        }
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)}
+
+
 def verify_stage1(root: Path, db_path: Path) -> dict[str, Any]:
     root = Path(root)
     clean_dir = root / "data" / "clean"
@@ -84,6 +108,7 @@ def verify_stage1(root: Path, db_path: Path) -> dict[str, Any]:
         "database": _database_report(Path(db_path)),
         "feature_outputs": feature_outputs,
         "loader": _loader_report(root),
+        "bipartite_graph": _bipartite_graph_report(root),
         "web_contract": _web_contract_report(root),
     }
 
@@ -95,7 +120,7 @@ def main() -> int:
     args = parser.parse_args()
     report = verify_stage1(root, args.db_path)
     print(json.dumps(report, ensure_ascii=False, indent=2))
-    critical = [report["data_integrity"], report["database"], report["feature_outputs"], report["web_contract"]]
+    critical = [report["data_integrity"], report["database"], report["feature_outputs"], report["bipartite_graph"], report["web_contract"]]
     return 0 if all(section.get("ok", False) for section in critical) else 1
 
 

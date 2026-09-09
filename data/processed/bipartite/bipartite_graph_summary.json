@@ -1,0 +1,95 @@
+{
+  "occupation_count": 12,
+  "skill_count": 35,
+  "edge_count": 420,
+  "required_edge_count": 173,
+  "isolated_occupation_count": 0,
+  "isolated_skill_count": 0,
+  "top_skills_by_weight": [
+    {
+      "skill_id": "2.A.1.a",
+      "weighted_degree": 5.365516
+    },
+    {
+      "skill_id": "2.A.2.a",
+      "weighted_degree": 5.272268
+    },
+    {
+      "skill_id": "2.A.1.b",
+      "weighted_degree": 4.971456
+    },
+    {
+      "skill_id": "2.B.2.i",
+      "weighted_degree": 4.825502
+    },
+    {
+      "skill_id": "2.B.4.e",
+      "weighted_degree": 4.637178
+    },
+    {
+      "skill_id": "2.A.1.d",
+      "weighted_degree": 4.598055
+    },
+    {
+      "skill_id": "2.A.1.c",
+      "weighted_degree": 4.413375
+    },
+    {
+      "skill_id": "2.A.2.b",
+      "weighted_degree": 4.402
+    },
+    {
+      "skill_id": "2.B.4.h",
+      "weighted_degree": 4.326579
+    },
+    {
+      "skill_id": "2.B.4.g",
+      "weighted_degree": 4.271755
+    }
+  ],
+  "top_occupations_by_weight": [
+    {
+      "occupation_id": "15-1244.00",
+      "weighted_degree": 10.993984
+    },
+    {
+      "occupation_id": "15-1211.00",
+      "weighted_degree": 10.016319
+    },
+    {
+      "occupation_id": "15-2031.00",
+      "weighted_degree": 9.019862
+    },
+    {
+      "occupation_id": "15-1242.00",
+      "weighted_degree": 8.628177
+    },
+    {
+      "occupation_id": "15-1243.00",
+      "weighted_degree": 8.477019
+    },
+    {
+      "occupation_id": "15-1253.00",
+      "weighted_degree": 8.387433
+    },
+    {
+      "occupation_id": "15-1255.00",
+      "weighted_degree": 8.167574
+    },
+    {
+      "occupation_id": "15-1254.00",
+      "weighted_degree": 8.079034
+    },
+    {
+      "occupation_id": "15-2051.00",
+      "weighted_degree": 8.073728
+    },
+    {
+      "occupation_id": "15-1251.00",
+      "weighted_degree": 8.06218
+    }
+  ],
+  "min_demand_weight": 0.3,
+  "full_edge_count": 420,
+  "filtered_edge_count": 158
+}

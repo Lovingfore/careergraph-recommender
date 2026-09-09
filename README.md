@@ -14,6 +14,7 @@
 - `src/database.py`：提供六张核心 SQLite 表、事务导入、计数和用户画像查询服务。
 - `src/init_database.py`：从 `data/clean/` 初始化 `artifacts/topic17.sqlite3`。
 - `src/data_loader.py`：把用户技能事件整理为连续月窗口，并构造职位-技能/职位转移图边张量。
+- `src/bipartite_graph.py`：从职位-技能关系构建带 `demand_weight` 权重的职位—技能二部图，并导出 JSON、CSV 和可视化文件。
 - `src/temporal_gat.py`：时序 GRU + 多头邻居聚合的 TemporalGAT 最小可运行骨架，训练和调参安排在第二周。
 - `src/verify_stage1.py`：输出第1周数据、数据库、特征、Loader 和 Web 契约验收 JSON。
 - `web/`：不新增 ORM 表的最小 Django 展示，页面和 `/api/summary/` 共用上述服务。
@@ -69,6 +70,18 @@ SQLite 数据库包含 `occupations`、`skills`、`occupation_skill`、`user_pro
 - `growth_score`：目标职位相对当前职位的平均技能要求提升。
 - `estimated_training_hours`：依据缺口分数和缺口数量估算的补全时间。
 - `recommendation_score`：`0.45 Match - 0.25 Gap + 0.15 Growth + 0.15 Path`。
+
+## 职位—技能二部图
+
+项目已从 `data/clean/occupation_skill.csv` 构建二部图：左侧为 12 个职位节点，右侧为 35 个技能节点，420 条边表示职位技能需求，边权为清洗后的 `demand_weight`。完整结构写入 `data/processed/bipartite/bipartite_graph.json`，边表写入 `bipartite_edges.csv`，统计摘要写入 `bipartite_graph_summary.json`。
+
+运行命令：
+
+```powershell
+python src/bipartite_graph.py --data-dir data/clean --out-dir data/processed/bipartite --min-demand-weight 0.30
+```
+
+其中 `--min-demand-weight` 只控制可视化子图显示阈值，不会删除 JSON/CSV 中的完整 420 条边。当前阈值为 0.30 时显示 158 条高权重边；由于绘图库是可选依赖，当前环境会生成可直接在浏览器打开的 SVG 文件。
 
 ## 算法选择
 

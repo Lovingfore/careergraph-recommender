@@ -12,5 +12,6 @@ $python = (Resolve-Path '.venv\Scripts\python.exe').Path
 & $python src\build_features.py
 & $python src\evaluate_recommendation.py
 & $python src\init_database.py --db-path artifacts\topic17.sqlite3 --data-dir data\clean
+& $python src\bipartite_graph.py --data-dir data\clean --out-dir data\processed\bipartite --min-demand-weight 0.30
 & $python src\verify_stage1.py --db-path artifacts\topic17.sqlite3
-Write-Host "CareerGraph Recommender data, database, feature, and verification pipeline completed."
+Write-Host "CareerGraph Recommender data, database, feature, bipartite graph, and verification pipeline completed."
