@@ -1,0 +1,24 @@
+{
+  "status": "trained",
+  "seed": 42,
+  "epochs": 10,
+  "sample_count": 18,
+  "split": {
+    "train": 10,
+    "validation": 3,
+    "test": 5
+  },
+  "baseline": {
+    "mae": 0.019242,
+    "rmse": 0.024185
+  },
+  "temporal_gat": {
+    "mae": 0.103711,
+    "rmse": 0.11769
+  },
+  "test": {
+    "mae": 0.103711,
+    "rmse": 0.11769
+  },
+  "data_note": "Evaluation uses deterministic teaching data, not real user outcomes."
+}
