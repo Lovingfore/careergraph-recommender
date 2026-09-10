@@ -63,8 +63,64 @@ def _web_contract_report(root: Path) -> dict[str, Any]:
     route_text = ""
     if not missing:
         route_text = (root / "web" / "topic17_app" / "urls.py").read_text(encoding="utf-8")
-    routes_ok = 'path("", index' in route_text and 'path("api/summary/", summary_api' in route_text
+    required_routes = [
+        'path("", index',
+        'path("api/summary/", summary_api',
+        'path("api/recommend/", recommendation_api',
+        'path("api/skill-gap/", skill_gap_api',
+        'path("api/career-path/", career_path_api',
+        'path("api/forecast/", forecast_api',
+        'path("bipartite-graph.svg", bipartite_graph',
+    ]
+    routes_ok = all(route in route_text for route in required_routes)
     return {"ok": not missing and routes_ok, "required_files": [str(path.relative_to(root)) for path in required], "missing_files": missing, "routes_ok": routes_ok}
+
+
+def _model_report(root: Path) -> dict[str, Any]:
+    model_dir = root / "artifacts" / "models"
+    checkpoint = model_dir / "temporal_gat.pt"
+    evaluation = model_dir / "evaluation_summary.json"
+    if checkpoint.exists() and evaluation.exists():
+        try:
+            summary = json.loads(evaluation.read_text(encoding="utf-8"))
+            return {
+                "ok": summary.get("status") == "trained",
+                "status": "trained" if summary.get("status") == "trained" else "not_trained",
+                "checkpoint": str(checkpoint.relative_to(root)),
+                "evaluation": str(evaluation.relative_to(root)),
+                "test": summary.get("test", {}),
+            }
+        except (OSError, json.JSONDecodeError) as exc:
+            return {"ok": False, "status": "not_trained", "error": str(exc)}
+    try:
+        import torch  # noqa: F401
+    except ModuleNotFoundError:
+        return {"ok": False, "status": "optional_dependency_unavailable", "error": "PyTorch is not installed; install requirements-optional-models.txt"}
+    return {"ok": False, "status": "not_trained", "error": "run src/train_temporal_gat.py to create a checkpoint"}
+
+
+def _web_api_report(root: Path) -> dict[str, Any]:
+    views_path = root / "web" / "topic17_app" / "views.py"
+    urls_path = root / "web" / "topic17_app" / "urls.py"
+    if not views_path.exists() or not urls_path.exists():
+        return {"ok": False, "error": "Web API source files are missing"}
+    views_text = views_path.read_text(encoding="utf-8")
+    urls_text = urls_path.read_text(encoding="utf-8")
+    required_views = ["recommendation_api", "skill_gap_api", "career_path_api", "forecast_api", "bipartite_graph"]
+    required_routes = ["api/recommend/", "api/skill-gap/", "api/career-path/", "api/forecast/", "bipartite-graph.svg"]
+    ok = all(name in views_text for name in required_views) and all(route in urls_text for route in required_routes)
+    return {
+        "ok": ok,
+        "routes": [
+            "/api/recommend/",
+            "/api/skill-gap/",
+            "/api/career-path/",
+            "/api/forecast/",
+            "/bipartite-graph.svg",
+        ],
+        "missing_views": [name for name in required_views if name not in views_text],
+        "missing_routes": [route for route in required_routes if route not in urls_text],
+    }
 
 
 def _bipartite_graph_report(root: Path) -> dict[str, Any]:
@@ -110,6 +166,8 @@ def verify_stage1(root: Path, db_path: Path) -> dict[str, Any]:
         "loader": _loader_report(root),
         "bipartite_graph": _bipartite_graph_report(root),
         "web_contract": _web_contract_report(root),
+        "model": _model_report(root),
+        "web_api": _web_api_report(root),
     }
 
 
@@ -120,7 +178,7 @@ def main() -> int:
     args = parser.parse_args()
     report = verify_stage1(root, args.db_path)
     print(json.dumps(report, ensure_ascii=False, indent=2))
-    critical = [report["data_integrity"], report["database"], report["feature_outputs"], report["bipartite_graph"], report["web_contract"]]
+    critical = [report["data_integrity"], report["database"], report["feature_outputs"], report["bipartite_graph"], report["web_contract"], report["web_api"]]
     return 0 if all(section.get("ok", False) for section in critical) else 1
 
 

@@ -12,6 +12,12 @@
     th { background: #eef5fb; }
     code { background: #f3f4f6; padding: .15rem .3rem; }
     .status { padding: .7rem; background: #f7fafc; border-left: 4px solid #2d7a46; }
+    .panel { padding: 1rem; border: 1px solid #d8e0ea; border-radius: .5rem; margin: 1rem 0; }
+    label { display: inline-block; margin: .3rem .8rem .3rem 0; }
+    input, button { padding: .45rem .6rem; border: 1px solid #b9c7d6; border-radius: .3rem; }
+    button { cursor: pointer; background: #123b66; color: white; }
+    pre { white-space: pre-wrap; background: #f7fafc; padding: .8rem; min-height: 4rem; }
+    img { max-width: 100%; border: 1px solid #d8e0ea; }
   </style>
 </head>
 <body>
@@ -30,5 +36,45 @@
   <div class="status">状态：{{ summary.loader.status }}；样本数：{{ summary.loader.num_samples|default:"-" }}；技能数：{{ summary.loader.num_skills|default:"-" }}</div>
   <h2>初始化命令</h2>
   <p><code>python src/init_database.py --db-path artifacts/topic17.sqlite3 --data-dir data/clean</code></p>
+
+  <section class="panel">
+    <h2>轻量推荐演示</h2>
+    <p>输入教学用户和职位编号，调用本地 JSON 接口查看推荐、技能缺口、职业路径与技能预测。</p>
+    <label>用户 ID <input id="user-id" value="u001" maxlength="20"></label>
+    <label>职位 ID <input id="occupation-id" value="15-1252.00" maxlength="20"></label>
+    <button type="button" onclick="loadDemo()">查询</button>
+    <pre id="demo-output">等待查询…</pre>
+  </section>
+
+  <section class="panel">
+    <h2>职位—技能二部图</h2>
+    <img src="/bipartite-graph.svg" alt="职位—技能二部图">
+  </section>
+
+  <script>
+    async function readJson(url) {
+      const response = await fetch(url);
+      const payload = await response.json();
+      return { status: response.status, payload };
+    }
+
+    async function loadDemo() {
+      const userId = encodeURIComponent(document.getElementById('user-id').value.trim());
+      const occupationId = encodeURIComponent(document.getElementById('occupation-id').value.trim());
+      const output = document.getElementById('demo-output');
+      if (!userId || !occupationId) {
+        output.textContent = '请填写用户 ID 和职位 ID';
+        return;
+      }
+      output.textContent = '查询中…';
+      const [recommend, gap, path, forecast] = await Promise.all([
+        readJson(`/api/recommend/?user_id=${userId}&top_k=5`),
+        readJson(`/api/skill-gap/?user_id=${userId}&occupation_id=${occupationId}`),
+        readJson(`/api/career-path/?user_id=${userId}&occupation_id=${occupationId}`),
+        readJson(`/api/forecast/?user_id=${userId}&months=6`),
+      ]);
+      output.textContent = JSON.stringify({recommend, gap, path, forecast}, null, 2);
+    }
+  </script>
 </body>
 </html>
