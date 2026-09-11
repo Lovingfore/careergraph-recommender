@@ -15,4 +15,6 @@ python src/prepare_dataset.py
 
 The selected O*NET occupation and skill rows are public source data under the
 source license. The generated user skill events and job transitions in
-`data/clean/` are deterministic teaching data, not real survey records.
+`data/clean/` contains the O*NET-derived reference tables plus 300 deterministic
+synthetic Chinese technical resumes. The resume, monthly event, and transition
+records are teaching data, not real personal or survey records.

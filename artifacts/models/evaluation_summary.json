@@ -2,23 +2,23 @@
   "status": "trained",
   "seed": 42,
   "epochs": 10,
-  "sample_count": 18,
+  "sample_count": 900,
   "split": {
-    "train": 10,
-    "validation": 3,
-    "test": 5
+    "train": 540,
+    "validation": 180,
+    "test": 180
   },
   "baseline": {
-    "mae": 0.019242,
-    "rmse": 0.024185
+    "mae": 0.017969,
+    "rmse": 0.022436
   },
   "temporal_gat": {
-    "mae": 0.103711,
-    "rmse": 0.11769
+    "mae": 0.12212,
+    "rmse": 0.145967
   },
   "test": {
-    "mae": 0.103711,
-    "rmse": 0.11769
+    "mae": 0.12212,
+    "rmse": 0.145967
   },
   "data_note": "Evaluation uses deterministic teaching data, not real user outcomes."
 }

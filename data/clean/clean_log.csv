@@ -2,5 +2,5 @@
 occupation_filter,O*NET Occupation Data.txt,occupations.csv,select 12 software/data/network occupations,12
 skill_filter,O*NET Skills.txt,occupation_skill.csv,"keep IM/LV, remove suppressed values, fill numeric values",420
 skill_dictionary,occupation_skill.csv,skills.csv,deduplicate skill_id and assign simple categories,35
-teaching_profile,occupation_skill.csv,user_profiles.csv and user_skill_events.csv,deterministically derive six small user profiles and six months of events,6
+synthetic_resume_profile,resumes_zh.csv,user_profiles.csv and user_skill_events.csv,generate 300 synthetic Chinese technical resumes and six months of skill events,300
 teaching_transition,selected occupations,job_transitions.csv,deterministically derive transition counts and normalize probabilities,12

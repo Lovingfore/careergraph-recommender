@@ -5,9 +5,10 @@
 ## 本次交付内容
 
 - `data/raw/README.md`：O*NET 30.2 原始数据下载和复现说明（原始大文件不纳入仓库）。
-- `data/clean/`：筛选出的 12 个软件、数据和网络方向职位的清洗结果。
+- `data/clean/`：12 个软件、数据和网络方向职位字典，以及 300 条合成中文技术岗简历。
 - `data/processed/`：职位向量、用户向量、用户-职位特征矩阵、转移图、Top-K 推荐和 6 个月技能预测。
 - `src/prepare_dataset.py`：读取 O*NET 并完成清洗、归一化、教学数据生成。
+- `src/generate_chinese_resumes.py`：生成 300 条可复现的中文技术岗简历及结构化技能字段。
 - `src/build_features.py`：完成特征工程、混合推荐和职业路径特征。
 - `src/forecast_skills.py`：用透明的线性趋势 baseline 预测未来 6 个月技能水平。
 - `src/evaluate_recommendation.py`：计算 Precision@K、Recall@K 和 NDCG@K。
@@ -32,7 +33,9 @@ O*NET 职位和技能表是真实公开数据，来源为 O*NET 30.2 Database，
 
 <https://www.onetcenter.org/database.html>
 
-为了让课程设计可运行且规模可控，本项目只抽取 12 个相关职位和 35 个通用技能。`user_skill_events.csv` 与 `job_transitions.csv` 是由选定 O*NET 职位向量和固定规则生成的确定性教学数据，不应在论文中表述为真实人员调查数据。后续如果拿到真实简历或职业转移数据，只需要替换这两个文件，特征工程接口不变。
+为了让课程设计可运行且规模可控，本项目抽取 12 个相关职位、35 个通用技能，并生成 300 条合成中文技术岗简历。`resumes_zh.csv`、`user_skill_events.csv` 与 `job_transitions.csv` 都是确定性合成教学数据，不是真实个人简历或真实就业记录；不包含姓名、电话、邮箱等个人信息。后续如果拿到合法授权且完成脱敏的真实简历，只需要替换简历输入并保留字段映射，特征工程接口不变。
+
+简历主数据文件为 `data/clean/resumes_zh.csv`，每行包含教育背景、专业、城市、工作年限、当前/目标职位、技能熟练度、项目经历和完整中文简历文本；`user_profiles.csv` 和 `user_skill_events.csv` 是由该文件自动派生的模型输入。
 
 ## 一键运行
 
