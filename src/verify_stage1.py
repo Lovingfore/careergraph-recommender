@@ -123,6 +123,30 @@ def _web_api_report(root: Path) -> dict[str, Any]:
     }
 
 
+def _resume_dataset_report(root: Path) -> dict[str, Any]:
+    path = root / "data" / "clean" / "resumes_zh.csv"
+    if not path.exists():
+        return {"ok": False, "rows": 0, "error": "resumes_zh.csv is missing"}
+    try:
+        import pandas as pd
+
+        resumes = pd.read_csv(path)
+        chinese_rows = resumes["resume_text"].astype(str).map(
+            lambda value: any("\u4e00" <= char <= "\u9fff" for char in value)
+        )
+        source_ok = resumes["source"].astype(str).eq("synthetic_chinese_resume").all()
+        unique_ok = resumes["resume_id"].nunique() == len(resumes) and resumes["user_id"].nunique() == len(resumes)
+        return {
+            "ok": len(resumes) == 300 and bool(chinese_rows.all()) and bool(source_ok) and unique_ok,
+            "rows": int(len(resumes)),
+            "chinese_text_rows": int(chinese_rows.sum()),
+            "source": "synthetic_chinese_resume",
+            "unique_ids": unique_ok,
+        }
+    except Exception as exc:
+        return {"ok": False, "rows": 0, "error": str(exc)}
+
+
 def _bipartite_graph_report(root: Path) -> dict[str, Any]:
     try:
         from bipartite_graph import build_bipartite_graph
@@ -168,6 +192,7 @@ def verify_stage1(root: Path, db_path: Path) -> dict[str, Any]:
         "web_contract": _web_contract_report(root),
         "model": _model_report(root),
         "web_api": _web_api_report(root),
+        "resume_dataset": _resume_dataset_report(root),
     }
 
 
@@ -178,7 +203,7 @@ def main() -> int:
     args = parser.parse_args()
     report = verify_stage1(root, args.db_path)
     print(json.dumps(report, ensure_ascii=False, indent=2))
-    critical = [report["data_integrity"], report["database"], report["feature_outputs"], report["bipartite_graph"], report["web_contract"], report["web_api"]]
+    critical = [report["data_integrity"], report["database"], report["feature_outputs"], report["bipartite_graph"], report["web_contract"], report["web_api"], report["resume_dataset"]]
     return 0 if all(section.get("ok", False) for section in critical) else 1
 
 
