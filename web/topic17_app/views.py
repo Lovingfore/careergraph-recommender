@@ -125,7 +125,7 @@ def occupations_api(request):
             for row in occupations.itertuples(index=False)
         ]
     except Exception as exc:
-        return JsonResponse({"status": "error", "error": f"职位字典不可用：{exc}"}, status=500)
+        return JsonResponse({"status": "error", "error": "职位字典暂不可用"}, status=500)
     return JsonResponse({"status": "ok", "occupations": rows})
 
 

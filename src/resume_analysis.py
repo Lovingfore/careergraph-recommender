@@ -127,6 +127,7 @@ def _recommendations(context: dict[str, Any], skill_vector: dict[str, float], cu
         rows.append({
             "candidate_job": candidate_job,
             "candidate_job_name": context["occupation_names"].get(candidate_job, candidate_job),
+            "candidate_job_name_zh": context["occupation_names"].get(candidate_job, candidate_job),
             "match_score": round(match_score, 6),
             "gap_score": round(gap_score, 6),
             "missing_skill_count": missing_count,

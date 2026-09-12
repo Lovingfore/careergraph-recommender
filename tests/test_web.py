@@ -33,6 +33,7 @@ class WebSmokeTests(unittest.TestCase):
         self.assertIn(b"CareerGraph Recommender", response.content)
         self.assertIn("上传简历".encode("utf-8"), response.content)
         self.assertIn(b"TemporalGAT", response.content)
+        self.assertIn(b"TemporalGAT RMSE", response.content)
 
     def test_model_info_api_returns_training_metadata(self):
         from django.test import Client
@@ -78,6 +79,7 @@ class WebSmokeTests(unittest.TestCase):
         self.assertEqual(payload["status"], "ok")
         self.assertFalse(payload["persisted"])
         self.assertTrue(payload["recommendations"])
+        self.assertIn("candidate_job_name_zh", payload["recommendations"][0])
         self.assertIn("career_path", payload)
         self.assertEqual(before, get_counts(db_path))
         self.assertEqual(before_hashes, {path: hashlib.sha256(path.read_bytes()).hexdigest() for path in canonical_files})

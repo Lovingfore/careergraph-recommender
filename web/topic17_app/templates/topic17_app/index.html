@@ -82,7 +82,9 @@
           <div class="model-stat"><small>训练轮数</small><b>{{ summary.model.epochs|default:"-" }}</b></div>
           <div class="model-stat"><small>样本切分</small><b>{{ summary.model.split.train|default:"-" }}/{{ summary.model.split.validation|default:"-" }}/{{ summary.model.split.test|default:"-" }}</b></div>
           <div class="model-stat"><small>TemporalGAT MAE</small><b>{{ summary.model.temporal_gat.mae|default:"-" }}</b></div>
+          <div class="model-stat"><small>TemporalGAT RMSE</small><b>{{ summary.model.temporal_gat.rmse|default:"-" }}</b></div>
           <div class="model-stat"><small>Baseline MAE</small><b>{{ summary.model.baseline.mae|default:"-" }}</b></div>
+          <div class="model-stat"><small>Baseline RMSE</small><b>{{ summary.model.baseline.rmse|default:"-" }}</b></div>
         </div>
         <p class="notice">TemporalGAT 已完成训练，但当前小规模合成数据上线性趋势 baseline 误差更低；页面只展示实验指标，不夸大模型效果。</p>
       </article>
@@ -159,7 +161,7 @@
       $('upload-result').hidden = false;
       const skills = payload.recognized_skills || [];
       $('recognized-skills').innerHTML = `<h3>识别技能（${payload.skill_count} 项）</h3><div>${skills.map((s) => `<span class="pill">${esc(s.skill_name_zh)} · ${esc(s.level)}</span>`).join('') || '<span class="status">未识别到标准技能，已使用基础技能向量。</span>'}</div><div class="skill-bars">${skills.map((s) => `<div class="skill-row"><span>${esc(s.skill_name_zh)}</span><span class="bar"><span class="fill" style="width:${Math.round(Number(s.level) * 100)}%"></span></span><span>${Math.round(Number(s.level) * 100)}%</span></div>`).join('')}</div>`;
-      $('upload-recommendations').innerHTML = table(['排名','职位','匹配度','缺口','预计补全小时'], (payload.recommendations || []).map((r) => [r.rank, r.candidate_job_name, r.match_score, r.gap_score, r.estimated_training_hours]));
+      $('upload-recommendations').innerHTML = table(['排名','职位','匹配度','缺口','预计补全小时'], (payload.recommendations || []).map((r) => [r.rank, r.candidate_job_name_zh || r.candidate_job_name, r.match_score, r.gap_score, r.estimated_training_hours]));
       $('upload-gap').innerHTML = table(['技能','当前水平','职位需求','缺口'], (payload.skill_gap.skills || []).slice(0, 8).map((s) => [s.skill_name_zh, s.current_level, s.demand_weight, s.gap]));
       const path = payload.career_path || {}; const names = path.path_names || [];
       $('upload-path').innerHTML = `<div class="path">${names.length ? names.map((name, i) => `${i ? '<i>→</i>' : ''}<span>${esc(name)}</span>`).join('') : '<span>暂无三跳以内可行路径</span>'}</div><p>路径可行性：${esc(path.path_probability)} · 跳数：${esc(path.path_length)}</p>`;
