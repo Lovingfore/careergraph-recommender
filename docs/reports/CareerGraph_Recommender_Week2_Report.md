@@ -10,8 +10,8 @@
 
 - 新增 `src/train_temporal_gat.py`。
 - 使用现有 `SkillSequenceDataset` 生成连续 3 个月窗口，当前共 900 个样本、35 项技能；样本来自 300 条合成中文技术岗简历。
-- 按时间顺序切分：训练 10 个窗口、验证 3 个窗口、测试 5 个窗口。
-- 使用固定随机种子 42、MSELoss、Adam 和 10 轮小规模训练。
+- 按时间顺序切分：训练 540 个窗口、验证 180 个窗口、测试 180 个窗口。
+- 使用固定随机种子 42、MSELoss、Adam 和 30 轮小规模训练。
 - 输出：
   - `artifacts/models/temporal_gat.pt`
   - `artifacts/models/training_log.csv`
@@ -24,7 +24,7 @@
 | 方法 | Test MAE | Test RMSE |
 |---|---:|---:|
 | 线性趋势 baseline | 0.017969 | 0.022436 |
-| TemporalGAT（10 轮） | 0.122120 | 0.145967 |
+| TemporalGAT（30 轮） | 0.116501 | 0.139666 |
 
 当前小样本下 baseline 优于未充分调参的 TemporalGAT，因此项目不会宣称深度模型效果更好。该结果可作为后续增加真实数据和调参的依据。
 
@@ -41,13 +41,16 @@
 
 新增接口：
 
+- `/api/model-info/`
+- `/api/occupations/`
+- `/api/resume-upload/`（UTF-8 `.txt/.md/.csv`，≤1 MB，仅内存分析，不落库）
 - `/api/recommend/`
 - `/api/skill-gap/`
 - `/api/career-path/`
 - `/api/forecast/`
 - `/bipartite-graph.svg`
 
-首页增加原生 HTML/JavaScript 查询区，可输入用户 ID 和职位 ID，查看四类 JSON 结果，并显示职位—技能二部图。页面不依赖外部 CDN 或固定设备插件。
+首页增加模型状态卡、数据库统计、基准用户查询区和“上传简历：即时分析（不落库）”区，可输入/选择当前职位与目标职位，查看动态推荐、技能缺口、补全时间和职业路径，并显示职位—技能二部图。页面不依赖外部 CDN 或固定设备插件。
 
 ### 5. 跨设备部署处理
 
@@ -62,7 +65,7 @@
 使用系统 Python（含 PyTorch 2.5.1）执行：
 
 ```text
-Ran 26 tests in 3.085s
+Ran 36 tests
 OK
 ```
 
@@ -75,13 +78,14 @@ OK
 - DataLoader 输出 `[2, 3, 35]` 通过；
 - 模型 checkpoint、日志和评价摘要已生成；
 - Django 首页、summary、推荐、缺口、路径、预测和二部图路由测试通过。
+- 模型信息、职位字典和简历上传接口测试通过；上传前后 SQLite 六张表行数保持不变。
 
 ## 当前限制
 
 1. 现有用户技能事件和职业转移仍是确定性教学数据。
 2. 当前 TemporalGAT 只是小样本教学模型，测试结果不具备真实招聘市场泛化意义。
 3. 还没有复杂用户登录、实时数据库、生产部署和大规模性能压测。
-4. 第二周报告是 Markdown 版本，后续答辩阶段可再导出 Word/PDF。
+4. 当前版本已另行生成完整中文 Word 汇报：`CareerGraph_Recommender_Final_Report.docx`。
 
 ## 建议后续工作
 

@@ -66,6 +66,9 @@ def _web_contract_report(root: Path) -> dict[str, Any]:
     required_routes = [
         'path("", index',
         'path("api/summary/", summary_api',
+        'path("api/model-info/", model_info_api',
+        'path("api/occupations/", occupations_api',
+        'path("api/resume-upload/", resume_upload_api',
         'path("api/recommend/", recommendation_api',
         'path("api/skill-gap/", skill_gap_api',
         'path("api/career-path/", career_path_api',
@@ -106,12 +109,15 @@ def _web_api_report(root: Path) -> dict[str, Any]:
         return {"ok": False, "error": "Web API source files are missing"}
     views_text = views_path.read_text(encoding="utf-8")
     urls_text = urls_path.read_text(encoding="utf-8")
-    required_views = ["recommendation_api", "skill_gap_api", "career_path_api", "forecast_api", "bipartite_graph"]
-    required_routes = ["api/recommend/", "api/skill-gap/", "api/career-path/", "api/forecast/", "bipartite-graph.svg"]
+    required_views = ["model_info_api", "occupations_api", "resume_upload_api", "recommendation_api", "skill_gap_api", "career_path_api", "forecast_api", "bipartite_graph"]
+    required_routes = ["api/model-info/", "api/occupations/", "api/resume-upload/", "api/recommend/", "api/skill-gap/", "api/career-path/", "api/forecast/", "bipartite-graph.svg"]
     ok = all(name in views_text for name in required_views) and all(route in urls_text for route in required_routes)
     return {
         "ok": ok,
         "routes": [
+            "/api/model-info/",
+            "/api/occupations/",
+            "/api/resume-upload/",
             "/api/recommend/",
             "/api/skill-gap/",
             "/api/career-path/",

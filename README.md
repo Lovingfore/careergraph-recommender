@@ -19,9 +19,11 @@
 - `src/temporal_gat.py`：时序 GRU + 多头邻居聚合的 TemporalGAT 最小可运行骨架，训练和调参安排在第二周。
 - `src/train_temporal_gat.py`：轻量 TemporalGAT 训练、顺序切分、MAE/RMSE 评价和 checkpoint 输出。
 - `src/recommendation_service.py`：可供命令行、Django 或未来其他 Web 框架复用的推荐、技能缺口、职业路径和技能预测服务。
+- `src/resume_analysis.py`：将上传的中文/英文文本简历映射为临时技能向量并实时计算推荐、缺口和路径，全程不落库。
 - `src/verify_stage1.py`：输出第1周数据、数据库、特征、Loader 和 Web 契约验收 JSON。
-- `web/`：不新增 ORM 表的最小 Django 展示，页面和 `/api/summary/` 共用上述服务。
+- `web/`：不新增 ORM 表的 Django 可视化仪表盘，展示数据/模型状态，支持基准用户查询和简历临时上传分析。
 - `docs/reports/CareerGraph_Recommender_Week1_Report.docx`：第一周阶段汇报，逐项对照计划表说明已完成任务、实现细节、验收证据和第二周边界。
+- `docs/reports/CareerGraph_Recommender_Final_Report.docx`：当前版本最终汇报，覆盖 300 条简历、模型训练、Web 界面、上传不落库流程和验收证据。
 
 运行后还会得到 `data/clean/clean_log.csv`，用于记录每一步清洗动作和行数变化；`data/processed/transition_graph.json` 保存职位转移图的可读版本。
 
@@ -67,17 +69,20 @@ powershell -ExecutionPolicy Bypass -File .\run_all.ps1 -TrainModel
 python web/manage.py runserver 127.0.0.1:8000
 ```
 
-然后访问 <http://127.0.0.1:8000/> 或 <http://127.0.0.1:8000/api/summary/>。
+然后访问 <http://127.0.0.1:8000/> 或 <http://127.0.0.1:8000/api/summary/>。首页包含模型信息卡、六张数据库表统计、职位—技能二部图、已有用户查询和“上传简历：即时分析（不落库）”表单。
 
 推荐演示接口：
 
+- `/api/model-info/`：读取训练轮数、样本切分、baseline 与 TemporalGAT MAE/RMSE（不依赖 PyTorch）。
+- `/api/occupations/`：返回职位 ID、英文名称和中文展示名称。
+- `/api/resume-upload/`：POST multipart 上传 `.txt/.md/.csv`（UTF-8，≤1 MB），在内存中解析技能并返回动态推荐、技能缺口和职业路径；响应含 `persisted=false`，不会写入 CSV/SQLite。
 - `/api/recommend/?user_id=u001&top_k=5`
 - `/api/skill-gap/?user_id=u001&occupation_id=15-1244.00`
 - `/api/career-path/?user_id=u001&occupation_id=15-1252.00`
 - `/api/forecast/?user_id=u001&months=6`
 - `/bipartite-graph.svg`
 
-这些接口只依赖项目内的 CSV、SQLite 和相对路径，可复制到其他 Windows 或 Linux 设备后重新安装依赖运行。没有 PyTorch 时，基础推荐、技能缺口、职业路径和页面仍可使用；预测接口会明确标记线性趋势 baseline，不会伪装成深度模型输出。
+这些接口只依赖项目内的 CSV、SQLite 和相对路径，可复制到其他 Windows 或 Linux 设备后重新安装依赖运行。没有 PyTorch 时，基础推荐、技能缺口、职业路径、简历上传和页面仍可使用；预测接口会明确标记线性趋势 baseline，不会伪装成深度模型输出。
 
 SQLite 数据库包含 `occupations`、`skills`、`occupation_skill`、`user_profiles`、`user_skill_events` 和 `job_transitions` 六张核心表；导入启用外键约束并在一个事务内完成，失败会回滚。数据库仅由共享服务读写，Django 不重复解析 CSV。
 
@@ -119,3 +124,5 @@ python src/bipartite_graph.py --data-dir data/clean --out-dir data/processed/bip
 第一周“算法选择与数据库搭建”阶段汇报见 [`docs/reports/CareerGraph_Recommender_Week1_Report.docx`](docs/reports/CareerGraph_Recommender_Week1_Report.docx)。文档记录了数据清洗、SQLite 建库入库、图结构与时序特征、DataLoader、TemporalGAT 前向骨架、Django 验证结果，以及尚未提前宣称的训练与调参工作。
 
 第二周轻量模型和 Web 展示补充说明见 [`docs/reports/CareerGraph_Recommender_Week2_Report.md`](docs/reports/CareerGraph_Recommender_Week2_Report.md)。
+
+当前版本完整汇报见 [`docs/reports/CareerGraph_Recommender_Final_Report.docx`](docs/reports/CareerGraph_Recommender_Final_Report.docx)。
