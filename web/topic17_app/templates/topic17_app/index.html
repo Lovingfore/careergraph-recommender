@@ -99,6 +99,7 @@
       <h2>上传简历：即时分析（不落库）</h2>
       <p>支持 UTF-8 编码的 <code>.txt</code>、<code>.md</code>、<code>.csv</code>，大小不超过 1 MB。文件只在本次请求内存中解析，数据库和训练数据不会改变。</p>
       <form id="upload-form" enctype="multipart/form-data">
+        {% csrf_token %}
         <div class="form-grid">
           <label>简历文件<input id="resume-file" type="file" name="resume" accept=".txt,.md,.csv" required></label>
           <label>当前职位（可选，留空自动推断）<select id="upload-current" name="current_job"><option value="">自动推断</option></select></label>

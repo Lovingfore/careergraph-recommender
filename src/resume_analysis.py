@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import json
 import re
-from collections import deque
 from pathlib import Path
 from typing import Any
 
@@ -81,20 +80,26 @@ def _load_context(root: Path) -> dict[str, Any]:
 def _path(graph: dict[str, list[tuple[str, float]]], source: str, target: str, max_hops: int = 3) -> tuple[list[str], float]:
     if source == target:
         return [source], 1.0
-    queue: deque[tuple[str, list[str], float]] = deque([(source, [source], 1.0)])
-    while queue:
-        node, current_path, probability = queue.popleft()
+    best_path: list[str] = []
+    best_probability = 0.0
+
+    def visit(node: str, current_path: list[str], probability: float) -> None:
+        nonlocal best_path, best_probability
         if len(current_path) - 1 >= max_hops:
-            continue
+            return
         for next_node, edge_probability in graph.get(node, []):
             if next_node in current_path:
                 continue
             next_path = current_path + [next_node]
             next_probability = probability * edge_probability
-            if next_node == target:
-                return next_path, next_probability
-            queue.append((next_node, next_path, next_probability))
-    return [], 0.0
+            if next_node == target and next_probability > best_probability:
+                best_path = next_path
+                best_probability = next_probability
+                continue
+            visit(next_node, next_path, next_probability)
+
+    visit(source, [source], 1.0)
+    return best_path, best_probability
 
 
 def _recommendations(context: dict[str, Any], skill_vector: dict[str, float], current_job: str, target_job: str | None, top_k: int) -> list[dict[str, Any]]:

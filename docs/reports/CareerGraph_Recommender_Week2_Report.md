@@ -65,7 +65,7 @@
 使用系统 Python（含 PyTorch 2.5.1）执行：
 
 ```text
-Ran 36 tests
+Ran 37 tests
 OK
 ```
 
@@ -79,6 +79,7 @@ OK
 - 模型 checkpoint、日志和评价摘要已生成；
 - Django 首页、summary、推荐、缺口、路径、预测和二部图路由测试通过。
 - 模型信息、职位字典和简历上传接口测试通过；上传前后 SQLite 六张表行数保持不变。
+- 上传 POST 启用 Django CSRF 保护，并限制单文件 1 MB、请求体 2 MB；基准 CSV 哈希保持不变。
 
 ## 当前限制
 

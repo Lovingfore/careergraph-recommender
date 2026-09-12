@@ -220,7 +220,8 @@ def build_report() -> Path:
         ["4. 动态计算", "对 12 个职位实时计算 Match/Gap/Growth/Path", "无"],
         ["5. 返回结果", "返回 recognized_skills、recommendations、skill_gap、career_path 和 persisted=false", "无"],
     ], [1.2, 5.0, 0.6])
-    doc.add_paragraph("上传接口不调用 SQLite 写入或 CSV 输出逻辑；测试在请求前后比较六张表计数，确保上传分析不会新增 user_profiles 或 user_skill_events。")
+    doc.add_paragraph("上传接口不调用 SQLite 写入或 CSV 输出逻辑；测试在请求前后比较六张表计数，并校验 resumes_zh.csv、user_profiles.csv、user_skill_events.csv 的 SHA-256 未改变，确保上传分析不会污染基准数据。")
+    _bullet(doc, "页面通过 Django CSRF token 保护上传 POST；服务端显式限制单文件 1 MB 和请求体 2 MB。")
 
     _heading(doc, "七、原始第17题要求对照")
     _table(doc, ["要求", "实现 / 证据", "状态"], [
@@ -235,7 +236,7 @@ def build_report() -> Path:
     ], [2.2, 4.0, 0.8])
 
     _heading(doc, "八、测试、验收与运行证据")
-    _bullet(doc, "全量单元测试：36/36 通过，覆盖数据完整性、数据库外键关系、DataLoader、TemporalGAT 前向、推荐服务、二部图、Web 页面和上传接口。")
+    _bullet(doc, "全量单元测试：37/37 通过，覆盖数据完整性、数据库外键关系、DataLoader、TemporalGAT 前向、推荐服务、二部图、Web 页面、上传接口、CSRF 和不落库校验。")
     _bullet(doc, "阶段验收 verify_stage1.py：data_integrity、database、feature_outputs、loader、bipartite_graph、web_contract、web_api、resume_dataset 均为 ok=true。")
     _bullet(doc, f"推荐评价：Precision@1={evaluation.loc[evaluation['k'] == 1, 'precision_at_k'].iloc[0]:.6f}，Recall@3={evaluation.loc[evaluation['k'] == 3, 'recall_at_k'].iloc[0]:.6f}，NDCG@5={evaluation.loc[evaluation['k'] == 5, 'ndcg_at_k'].iloc[0]:.6f}。")
     _bullet(doc, f"技能预测文件共 {len(forecast)} 条（300 用户 × 35 技能），DataLoader 形成 900 个 [3, 35] 时序样本。")

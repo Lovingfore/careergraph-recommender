@@ -9,7 +9,6 @@ from typing import Any
 
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
 
 from src.database import get_counts, query_user_profile
 from src.data_loader import build_dataloader
@@ -185,7 +184,6 @@ def bipartite_graph(request):
     return HttpResponse(graph_path.read_text(encoding="utf-8"), content_type="image/svg+xml")
 
 
-@csrf_exempt
 def resume_upload_api(request):
     if request.method != "POST":
         return JsonResponse({"status": "error", "error": "仅支持 POST 请求"}, status=405)
@@ -216,6 +214,8 @@ def resume_upload_api(request):
         )
     except ValueError as exc:
         return JsonResponse({"status": "error", "error": str(exc)}, status=400)
+    except Exception:
+        return JsonResponse({"status": "error", "error": "分析所需的数据文件暂不可用"}, status=503)
     result["filename"] = upload.name
     return JsonResponse(result)
 

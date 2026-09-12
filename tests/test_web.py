@@ -1,4 +1,5 @@
 from pathlib import Path
+import hashlib
 import os
 import unittest
 
@@ -60,6 +61,8 @@ class WebSmokeTests(unittest.TestCase):
         from src.database import get_counts
 
         db_path = ROOT / "artifacts" / "topic17.sqlite3"
+        canonical_files = [ROOT / "data" / "clean" / name for name in ("resumes_zh.csv", "user_profiles.csv", "user_skill_events.csv")]
+        before_hashes = {path: hashlib.sha256(path.read_bytes()).hexdigest() for path in canonical_files}
         before = get_counts(db_path)
         upload = SimpleUploadedFile(
             "resume.txt",
@@ -77,6 +80,7 @@ class WebSmokeTests(unittest.TestCase):
         self.assertTrue(payload["recommendations"])
         self.assertIn("career_path", payload)
         self.assertEqual(before, get_counts(db_path))
+        self.assertEqual(before_hashes, {path: hashlib.sha256(path.read_bytes()).hexdigest() for path in canonical_files})
 
     def test_resume_upload_rejects_invalid_extension_and_empty_text(self):
         from django.core.files.uploadedfile import SimpleUploadedFile
@@ -95,6 +99,15 @@ class WebSmokeTests(unittest.TestCase):
         oversized = SimpleUploadedFile("resume.txt", b"a" * (1024 * 1024 + 1), content_type="text/plain")
         response = Client().post("/api/resume-upload/", {"resume": oversized})
         self.assertEqual(response.status_code, 400)
+
+    def test_resume_upload_requires_csrf_token(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from django.test import Client
+
+        client = Client(enforce_csrf_checks=True)
+        upload = SimpleUploadedFile("resume.txt", "Python 数据库".encode("utf-8"), content_type="text/plain")
+        response = client.post("/api/resume-upload/", {"resume": upload})
+        self.assertEqual(response.status_code, 403)
 
     def test_recommendation_api_returns_rows(self):
         from django.test import Client
