@@ -1,0 +1,145 @@
+{
+  "data_integrity": {
+    "orphan_occupation_ids": [],
+    "orphan_skill_ids": [],
+    "invalid_profile_current_jobs": [],
+    "invalid_profile_target_jobs": [],
+    "invalid_event_user_ids": [],
+    "invalid_event_skill_ids": [],
+    "invalid_transition_from_jobs": [],
+    "invalid_transition_to_jobs": [],
+    "duplicate_occupation_skill_pairs": 0,
+    "duplicate_event_keys": 0,
+    "probability_sum_errors": [],
+    "skill_level_out_of_range": 0,
+    "demand_weight_out_of_range": 0,
+    "ok": true
+  },
+  "database": {
+    "ok": true,
+    "counts": {
+      "occupations": 12,
+      "skills": 35,
+      "occupation_skill": 420,
+      "user_profiles": 300,
+      "user_skill_events": 63000,
+      "job_transitions": 12
+    },
+    "missing_or_empty_tables": []
+  },
+  "feature_outputs": {
+    "selected_occupation_ids": [
+      "15-1211.00",
+      "15-1212.00",
+      "15-1242.00",
+      "15-1243.00",
+      "15-1244.00",
+      "15-1251.00",
+      "15-1252.00",
+      "15-1253.00",
+      "15-1254.00",
+      "15-1255.00",
+      "15-2031.00",
+      "15-2051.00"
+    ],
+    "skill_occupation_ids": [
+      "15-1211.00",
+      "15-1212.00",
+      "15-1242.00",
+      "15-1243.00",
+      "15-1244.00",
+      "15-1251.00",
+      "15-1252.00",
+      "15-1253.00",
+      "15-1254.00",
+      "15-1255.00",
+      "15-2031.00",
+      "15-2051.00"
+    ],
+    "feature_occupation_ids": [
+      "15-1211.00",
+      "15-1212.00",
+      "15-1242.00",
+      "15-1243.00",
+      "15-1244.00",
+      "15-1251.00",
+      "15-1252.00",
+      "15-1253.00",
+      "15-1254.00",
+      "15-1255.00",
+      "15-2031.00",
+      "15-2051.00"
+    ],
+    "missing_skill_occupations": [],
+    "missing_feature_occupations": [],
+    "missing_target_jobs": [],
+    "ok": true
+  },
+  "loader": {
+    "ok": true,
+    "status": "available",
+    "num_samples": 900,
+    "num_skills": 35,
+    "sequence_length": 3,
+    "first_batch_shape": [
+      2,
+      3,
+      35
+    ]
+  },
+  "bipartite_graph": {
+    "ok": true,
+    "occupation_count": 12,
+    "skill_count": 35,
+    "edge_count": 420,
+    "display_edge_count": 158,
+    "isolated_occupation_count": 0,
+    "isolated_skill_count": 0
+  },
+  "web_contract": {
+    "ok": true,
+    "required_files": [
+      "web\\manage.py",
+      "web\\topic17_web\\settings.py",
+      "web\\topic17_web\\urls.py",
+      "web\\topic17_web\\wsgi.py",
+      "web\\topic17_app\\views.py",
+      "web\\topic17_app\\urls.py",
+      "web\\topic17_app\\templates\\topic17_app\\index.html"
+    ],
+    "missing_files": [],
+    "routes_ok": true
+  },
+  "model": {
+    "ok": true,
+    "status": "trained",
+    "checkpoint": "artifacts\\models\\temporal_gat.pt",
+    "evaluation": "artifacts\\models\\evaluation_summary.json",
+    "test": {
+      "mae": 0.116501,
+      "rmse": 0.139666
+    }
+  },
+  "web_api": {
+    "ok": true,
+    "routes": [
+      "/api/model-info/",
+      "/api/occupations/",
+      "/api/resume-upload/",
+      "/api/recommend/",
+      "/api/skill-gap/",
+      "/api/career-path/",
+      "/api/forecast/",
+      "/bipartite-graph.svg"
+    ],
+    "missing_views": [],
+    "missing_routes": []
+  },
+  "resume_dataset": {
+    "ok": true,
+    "rows": 300,
+    "chinese_text_rows": 300,
+    "source": "synthetic_chinese_resume",
+    "unique_ids": true
+  }
+}

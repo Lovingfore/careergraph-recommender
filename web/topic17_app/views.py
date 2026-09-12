@@ -3,14 +3,18 @@
 from __future__ import annotations
 
 import os
+import json
 from pathlib import Path
 from typing import Any
 
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 
 from src.database import get_counts, query_user_profile
 from src.data_loader import build_dataloader
+from src.generate_chinese_resumes import OCCUPATION_NAMES_ZH
+from src.resume_analysis import SUPPORTED_EXTENSIONS, analyze_resume_text
 from src.recommendation_service import (
     career_path_for_user,
     forecast_for_user,
@@ -20,6 +24,7 @@ from src.recommendation_service import (
 
 
 BASE_DIR = Path(__file__).resolve().parents[2]
+MAX_RESUME_BYTES = 1024 * 1024
 
 
 def _db_path() -> Path:
@@ -60,13 +65,69 @@ def _summary() -> dict[str, Any]:
         "counts": counts,
         "database": database_status,
         "loader": loader_status,
+        "model": _model_info(),
         "sample_profile": profile,
         "db_path": str(db_path),
     }
 
 
+def _model_info() -> dict[str, Any]:
+    """Read model metadata without requiring the optional PyTorch package."""
+
+    evaluation_path = BASE_DIR / "artifacts" / "models" / "evaluation_summary.json"
+    checkpoint_path = BASE_DIR / "artifacts" / "models" / "temporal_gat.pt"
+    if not evaluation_path.exists():
+        return {
+            "status": "unavailable",
+            "error": "未找到模型评估文件，请先运行训练命令。",
+            "checkpoint_exists": checkpoint_path.exists(),
+        }
+    try:
+        summary = json.loads(evaluation_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return {"status": "unavailable", "error": f"模型评估文件不可读：{exc}", "checkpoint_exists": checkpoint_path.exists()}
+    return {
+        "status": "trained" if summary.get("status") == "trained" and checkpoint_path.exists() else "unavailable",
+        "epochs": summary.get("epochs"),
+        "sample_count": summary.get("sample_count"),
+        "split": summary.get("split", {}),
+        "baseline": summary.get("baseline", {}),
+        "temporal_gat": summary.get("temporal_gat", {}),
+        "data_note": summary.get("data_note", ""),
+        "checkpoint_exists": checkpoint_path.exists(),
+        "evaluation_file": str(evaluation_path.relative_to(BASE_DIR)),
+    }
+
+
 def summary_api(request):
     return JsonResponse(_summary())
+
+
+def model_info_api(request):
+    if request.method != "GET":
+        return JsonResponse({"status": "error", "error": "仅支持 GET 请求"}, status=405)
+    return JsonResponse(_model_info())
+
+
+def occupations_api(request):
+    if request.method != "GET":
+        return JsonResponse({"status": "error", "error": "仅支持 GET 请求"}, status=405)
+    path = BASE_DIR / "data" / "clean" / "occupations.csv"
+    try:
+        import pandas as pd
+
+        occupations = pd.read_csv(path, dtype=str).sort_values("occupation_id")
+        rows = [
+            {
+                "occupation_id": str(row.occupation_id),
+                "occupation_name": str(row.occupation_name),
+                "occupation_name_zh": OCCUPATION_NAMES_ZH.get(str(row.occupation_name), str(row.occupation_name)),
+            }
+            for row in occupations.itertuples(index=False)
+        ]
+    except Exception as exc:
+        return JsonResponse({"status": "error", "error": f"职位字典不可用：{exc}"}, status=500)
+    return JsonResponse({"status": "ok", "occupations": rows})
 
 
 def _required_query(request, *names: str) -> dict[str, str] | JsonResponse:
@@ -122,6 +183,41 @@ def bipartite_graph(request):
     if not graph_path.exists():
         return HttpResponse("bipartite graph is not generated", status=404, content_type="text/plain; charset=utf-8")
     return HttpResponse(graph_path.read_text(encoding="utf-8"), content_type="image/svg+xml")
+
+
+@csrf_exempt
+def resume_upload_api(request):
+    if request.method != "POST":
+        return JsonResponse({"status": "error", "error": "仅支持 POST 请求"}, status=405)
+    upload = request.FILES.get("resume")
+    if upload is None:
+        return JsonResponse({"status": "error", "error": "请上传简历文件"}, status=400)
+    suffix = Path(upload.name or "").suffix.casefold()
+    if suffix not in SUPPORTED_EXTENSIONS:
+        return JsonResponse({"status": "error", "error": "仅支持 .txt、.md 或 .csv 简历文件"}, status=400)
+    if getattr(upload, "size", 0) > MAX_RESUME_BYTES:
+        return JsonResponse({"status": "error", "error": "简历文件不能超过 1 MB"}, status=400)
+    try:
+        raw = upload.read(MAX_RESUME_BYTES + 1)
+    except Exception as exc:
+        return JsonResponse({"status": "error", "error": f"读取简历失败：{exc}"}, status=400)
+    if len(raw) > MAX_RESUME_BYTES:
+        return JsonResponse({"status": "error", "error": "简历文件不能超过 1 MB"}, status=400)
+    try:
+        text = raw.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        return JsonResponse({"status": "error", "error": "简历必须使用 UTF-8 编码"}, status=400)
+    try:
+        result = analyze_resume_text(
+            text,
+            root=BASE_DIR,
+            current_job=request.POST.get("current_job") or None,
+            target_job=request.POST.get("target_job") or None,
+        )
+    except ValueError as exc:
+        return JsonResponse({"status": "error", "error": str(exc)}, status=400)
+    result["filename"] = upload.name
+    return JsonResponse(result)
 
 
 def index(request):

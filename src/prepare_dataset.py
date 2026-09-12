@@ -1,9 +1,8 @@
-"""Prepare a small, reproducible Topic 17 dataset from the O*NET text database.
+"""Prepare the O*NET dictionary and a small synthetic Chinese resume dataset.
 
-The O*NET occupation and skill tables are real public data. The user skill
-events and job transitions are deterministic teaching data derived from the
-selected occupations because the small O*NET extract does not contain a
-person-level longitudinal transition table.
+The O*NET occupation and skill tables are public reference data. The resume
+records, monthly skill events and job transitions are deterministic synthetic
+teaching data; they contain no real person's identity or contact information.
 """
 
 from __future__ import annotations
@@ -16,6 +15,7 @@ import numpy as np
 import pandas as pd
 
 from data_integrity import validate_clean_dataset
+from generate_chinese_resumes import generate_resumes
 
 
 OCCUPATION_CODES = [
@@ -140,25 +140,33 @@ def make_occupation_skills(onet_dir: Path, occupations: pd.DataFrame, out_dir: P
     return pivot, skills
 
 
-def make_users_and_events(occupation_skill: pd.DataFrame, out_dir: Path):
-    profiles = pd.DataFrame(USER_PROFILES)
+def make_users_and_events(occupation_skill: pd.DataFrame, out_dir: Path, resumes: pd.DataFrame | None = None):
+    if resumes is None:
+        profiles = pd.DataFrame(USER_PROFILES)
+    else:
+        profiles = resumes[["user_id", "current_job", "target_job"]].copy()
     profiles.to_csv(out_dir / "user_profiles.csv", index=False, encoding="utf-8-sig")
     base = occupation_skill.pivot_table(index="occupation_id", columns="skill_id", values="demand_weight", fill_value=0)
     rng = np.random.default_rng(20260908)
     rows = []
-    for profile in USER_PROFILES:
+    for profile in profiles.to_dict("records"):
         vector = base.loc[profile["current_job"]]
+        resume_levels = {}
+        if resumes is not None:
+            resume_row = resumes.loc[resumes["user_id"] == profile["user_id"]].iloc[0]
+            resume_levels = {str(key): float(value) for key, value in json.loads(resume_row["skill_levels"]).items()}
         for month in range(6):
             for skill_id, demand in vector.items():
-                trend = 0.025 * month if demand > 0.25 else 0.01 * month
+                initial = resume_levels.get(str(skill_id), float(np.clip(0.18 + 0.68 * demand, 0, 1)))
+                trend = 0.018 * month if demand > 0.25 else 0.008 * month
                 noise = rng.normal(0, 0.012)
-                level = float(np.clip(0.18 + 0.68 * demand + trend + noise, 0, 1))
+                level = float(np.clip(initial + trend + noise, 0, 1))
                 rows.append({
                     "user_id": profile["user_id"],
                     "month": month,
                     "skill_id": skill_id,
                     "level": round(level, 6),
-                    "source": "derived_teaching_data",
+                    "source": "synthetic_chinese_resume",
                 })
     events = pd.DataFrame(rows)
     events.to_csv(out_dir / "user_skill_events.csv", index=False, encoding="utf-8-sig")
@@ -184,13 +192,15 @@ def main():
     onet_dir = find_onet_dir(args.raw_dir)
     occupations = make_occupations(onet_dir, args.out_dir)
     occupation_skill, skills = make_occupation_skills(onet_dir, occupations, args.out_dir)
-    profiles, events = make_users_and_events(occupation_skill, args.out_dir)
+    resumes = generate_resumes(occupations, occupation_skill, skills, count=300, seed=20260911)
+    resumes.to_csv(args.out_dir / "resumes_zh.csv", index=False, encoding="utf-8-sig")
+    profiles, events = make_users_and_events(occupation_skill, args.out_dir, resumes=resumes)
     transitions = make_transitions(occupations, args.out_dir)
     clean_log = pd.DataFrame([
         {"stage": "occupation_filter", "input": "O*NET Occupation Data.txt", "output": "occupations.csv", "action": "select 12 software/data/network occupations", "rows": len(occupations)},
         {"stage": "skill_filter", "input": "O*NET Skills.txt", "output": "occupation_skill.csv", "action": "keep IM/LV, remove suppressed values, fill numeric values", "rows": len(occupation_skill)},
         {"stage": "skill_dictionary", "input": "occupation_skill.csv", "output": "skills.csv", "action": "deduplicate skill_id and assign simple categories", "rows": len(skills)},
-        {"stage": "teaching_profile", "input": "occupation_skill.csv", "output": "user_profiles.csv and user_skill_events.csv", "action": "deterministically derive six small user profiles and six months of events", "rows": len(profiles)},
+        {"stage": "synthetic_resume_profile", "input": "resumes_zh.csv", "output": "user_profiles.csv and user_skill_events.csv", "action": "generate 300 synthetic Chinese technical resumes and six months of skill events", "rows": len(profiles)},
         {"stage": "teaching_transition", "input": "selected occupations", "output": "job_transitions.csv", "action": "deterministically derive transition counts and normalize probabilities", "rows": len(transitions)},
     ])
     clean_log.to_csv(args.out_dir / "clean_log.csv", index=False, encoding="utf-8-sig")
@@ -204,10 +214,11 @@ def main():
         "selected_occupations": int(len(occupations)),
         "skills": int(len(skills)),
         "occupation_skill_rows": int(len(occupation_skill)),
+        "resumes": int(len(resumes)),
         "users": int(len(profiles)),
         "user_skill_event_rows": int(len(events)),
         "transition_rows": int(len(transitions)),
-        "note": "O*NET tables are public source data. user_skill_events and job_transitions are deterministic teaching data derived from selected O*NET occupations and must be labeled as simulated in reports.",
+        "note": "O*NET tables are public source data. resumes_zh.csv, user_skill_events.csv and job_transitions.csv are deterministic synthetic teaching data and contain no real personal information.",
     }
     (args.out_dir / "dataset_summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(summary, ensure_ascii=False, indent=2))

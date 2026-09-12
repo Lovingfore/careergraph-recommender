@@ -5,8 +5,9 @@
   "selected_occupations": 12,
   "skills": 35,
   "occupation_skill_rows": 420,
-  "users": 6,
-  "user_skill_event_rows": 1260,
+  "resumes": 300,
+  "users": 300,
+  "user_skill_event_rows": 63000,
   "transition_rows": 12,
-  "note": "O*NET tables are public source data. user_skill_events and job_transitions are deterministic teaching data derived from selected O*NET occupations and must be labeled as simulated in reports."
+  "note": "O*NET tables are public source data. resumes_zh.csv, user_skill_events.csv and job_transitions.csv are deterministic synthetic teaching data and contain no real personal information."
 }

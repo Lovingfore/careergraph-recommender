@@ -3,78 +3,188 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CareerGraph Recommender 数据与模型状态</title>
+  <title>CareerGraph · 动态职业规划</title>
   <style>
-    body { font-family: Segoe UI, sans-serif; margin: 2rem auto; max-width: 960px; color: #1f2937; }
-    h1 { color: #123b66; }
-    table { border-collapse: collapse; width: 100%; margin: 1rem 0 1.5rem; }
-    th, td { border: 1px solid #d8e0ea; padding: .55rem .7rem; text-align: left; }
-    th { background: #eef5fb; }
-    code { background: #f3f4f6; padding: .15rem .3rem; }
-    .status { padding: .7rem; background: #f7fafc; border-left: 4px solid #2d7a46; }
-    .panel { padding: 1rem; border: 1px solid #d8e0ea; border-radius: .5rem; margin: 1rem 0; }
-    label { display: inline-block; margin: .3rem .8rem .3rem 0; }
-    input, button { padding: .45rem .6rem; border: 1px solid #b9c7d6; border-radius: .3rem; }
-    button { cursor: pointer; background: #123b66; color: white; }
-    pre { white-space: pre-wrap; background: #f7fafc; padding: .8rem; min-height: 4rem; }
-    img { max-width: 100%; border: 1px solid #d8e0ea; }
+    :root { --ink:#172033; --muted:#64748b; --line:#e2e8f0; --blue:#2563eb; --blue-dark:#1e40af; --sky:#eff6ff; --green:#15803d; --shadow:0 12px 30px rgba(15,23,42,.08); }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); font-family: "Microsoft YaHei", "Segoe UI", sans-serif; background:linear-gradient(135deg,#f8fbff 0%,#f1f5f9 55%,#eef2ff 100%); }
+    .shell { max-width:1180px; margin:0 auto; padding:28px 20px 56px; }
+    .hero { display:flex; justify-content:space-between; align-items:flex-end; gap:24px; margin-bottom:26px; }
+    h1 { margin:0 0 8px; font-size:clamp(28px,4vw,42px); letter-spacing:-.03em; }
+    h2 { margin:0 0 12px; font-size:20px; }
+    h3 { margin:0 0 8px; font-size:16px; }
+    p { color:var(--muted); line-height:1.65; }
+    .eyebrow { margin:0 0 8px; color:var(--blue); font-size:13px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
+    .hero-note { max-width:430px; margin:0; text-align:right; font-size:13px; }
+    .grid { display:grid; gap:16px; }
+    .metrics { grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); margin-bottom:18px; }
+    .two { grid-template-columns:repeat(auto-fit,minmax(330px,1fr)); }
+    .card { background:rgba(255,255,255,.92); border:1px solid rgba(226,232,240,.9); border-radius:18px; padding:20px; box-shadow:var(--shadow); }
+    .metric strong { display:block; font-size:30px; color:var(--blue-dark); }
+    .metric span { color:var(--muted); font-size:13px; }
+    .metric small { display:block; color:var(--muted); margin-top:5px; }
+    .model-card { border-left:5px solid var(--blue); }
+    .model-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(145px,1fr)); gap:12px; }
+    .model-stat { background:var(--sky); border-radius:12px; padding:12px; }
+    .model-stat b { display:block; font-size:18px; margin-top:4px; }
+    .model-stat small { color:var(--muted); }
+    .notice { padding:11px 13px; border-radius:10px; background:#fffbeb; color:#92400e; font-size:13px; line-height:1.55; }
+    label { display:block; color:#334155; font-size:13px; font-weight:600; }
+    input, select, button { width:100%; margin-top:6px; padding:10px 11px; border:1px solid #cbd5e1; border-radius:10px; font:inherit; background:#fff; }
+    input[type=file] { padding:8px; }
+    button { border:0; background:var(--blue); color:#fff; font-weight:700; cursor:pointer; transition:background .2s, transform .2s; }
+    button:hover { background:var(--blue-dark); transform:translateY(-1px); }
+    .form-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:13px; margin:14px 0; }
+    .actions { display:flex; gap:10px; align-items:center; }
+    .actions button { max-width:180px; }
+    .status { min-height:42px; padding:10px 12px; border-radius:10px; background:#f8fafc; color:var(--muted); font-size:13px; white-space:pre-wrap; }
+    .status.ok { color:var(--green); background:#f0fdf4; }
+    .status.error { color:#b91c1c; background:#fef2f2; }
+    table { width:100%; border-collapse:collapse; margin-top:10px; font-size:13px; }
+    th,td { padding:9px 8px; text-align:left; border-bottom:1px solid var(--line); vertical-align:top; }
+    th { color:#475569; background:#f8fafc; font-weight:700; }
+    .table-wrap { overflow-x:auto; }
+    .result { margin-top:18px; }
+    .pill { display:inline-block; padding:4px 8px; margin:3px 4px 0 0; border-radius:999px; background:#dbeafe; color:#1e40af; font-size:12px; }
+    .skill-bars { display:grid; gap:8px; margin:10px 0 16px; max-width:700px; }
+    .skill-row { display:grid; grid-template-columns:120px 1fr 45px; gap:8px; align-items:center; font-size:12px; color:#475569; }
+    .bar { height:9px; border-radius:99px; background:#e2e8f0; overflow:hidden; }
+    .fill { height:100%; border-radius:99px; background:linear-gradient(90deg,#60a5fa,#2563eb); }
+    .path { display:flex; flex-wrap:wrap; align-items:center; gap:7px; margin:10px 0; }
+    .path span { padding:8px 10px; background:#eef2ff; border-radius:9px; font-size:13px; }
+    .path i { color:#94a3b8; font-style:normal; }
+    img { display:block; width:100%; max-height:620px; object-fit:contain; border:1px solid var(--line); border-radius:12px; background:#fff; }
+    code { padding:2px 5px; border-radius:5px; background:#f1f5f9; color:#334155; }
+    footer { margin-top:24px; color:var(--muted); font-size:12px; text-align:center; }
+    @media (max-width:700px) { .shell { padding:20px 13px 40px; } .hero { display:block; } .hero-note { text-align:left; margin-top:12px; } .card { padding:16px; border-radius:14px; } }
   </style>
 </head>
 <body>
-  <h1>CareerGraph Recommender</h1>
-  <p>第1周阶段：数据清洗、SQLite 建库、DataLoader 接口与模型骨架。</p>
-  <h2>数据库六张核心表</h2>
-  <table>
-    <thead><tr><th>表</th><th>行数</th></tr></thead>
-    <tbody>
-      {% for name, count in summary.counts.items %}
-      <tr><td>{{ name }}</td><td>{{ count }}</td></tr>
-      {% empty %}<tr><td colspan="2">数据库尚未初始化</td></tr>{% endfor %}
-    </tbody>
-  </table>
-  <h2>DataLoader</h2>
-  <div class="status">状态：{{ summary.loader.status }}；样本数：{{ summary.loader.num_samples|default:"-" }}；技能数：{{ summary.loader.num_skills|default:"-" }}</div>
-  <h2>初始化命令</h2>
-  <p><code>python src/init_database.py --db-path artifacts/topic17.sqlite3 --data-dir data/clean</code></p>
+  <main class="shell">
+    <header class="hero">
+      <div><p class="eyebrow">CareerGraph Recommender</p><h1>动态职业发展工作台</h1><p>从技能画像到职位推荐、技能缺口和职业路径，一页完成课程设计演示。</p></div>
+      <p class="hero-note">本页面使用 O*NET 职位/技能字典与 300 条确定性合成中文技术岗简历；结果用于教学实验，不代表真实招聘市场。</p>
+    </header>
 
-  <section class="panel">
-    <h2>轻量推荐演示</h2>
-    <p>输入教学用户和职位编号，调用本地 JSON 接口查看推荐、技能缺口、职业路径与技能预测。</p>
-    <label>用户 ID <input id="user-id" value="u001" maxlength="20"></label>
-    <label>职位 ID <input id="occupation-id" value="15-1252.00" maxlength="20"></label>
-    <button type="button" onclick="loadDemo()">查询</button>
-    <pre id="demo-output">等待查询…</pre>
-  </section>
+    <section class="grid metrics" aria-label="数据规模">
+      <div class="card metric"><strong>{{ summary.counts.user_profiles|default:"-" }}</strong><span>合成简历 / 用户</span><small>主数据 resumes_zh.csv</small></div>
+      <div class="card metric"><strong>{{ summary.counts.occupations|default:"-" }}</strong><span>职位</span><small>O*NET 30.2 字典</small></div>
+      <div class="card metric"><strong>{{ summary.counts.skills|default:"-" }}</strong><span>技能</span><small>职位技能需求向量</small></div>
+      <div class="card metric"><strong>{{ summary.counts.user_skill_events|default:"-" }}</strong><span>技能事件</span><small>6 个月时序窗口</small></div>
+      <div class="card metric"><strong>{{ summary.loader.num_samples|default:"-" }}</strong><span>训练窗口</span><small>3 个月输入序列</small></div>
+    </section>
 
-  <section class="panel">
-    <h2>职位—技能二部图</h2>
-    <img src="/bipartite-graph.svg" alt="职位—技能二部图">
-  </section>
+    <section class="grid two">
+      <article class="card model-card">
+        <h2>模型状态</h2>
+        <div id="model-status" class="status {% if summary.model.status == 'trained' %}ok{% endif %}">{{ summary.model.status|default:"unavailable" }}</div>
+        <div class="model-grid" id="model-stats">
+          <div class="model-stat"><small>训练轮数</small><b>{{ summary.model.epochs|default:"-" }}</b></div>
+          <div class="model-stat"><small>样本切分</small><b>{{ summary.model.split.train|default:"-" }}/{{ summary.model.split.validation|default:"-" }}/{{ summary.model.split.test|default:"-" }}</b></div>
+          <div class="model-stat"><small>TemporalGAT MAE</small><b>{{ summary.model.temporal_gat.mae|default:"-" }}</b></div>
+          <div class="model-stat"><small>Baseline MAE</small><b>{{ summary.model.baseline.mae|default:"-" }}</b></div>
+        </div>
+        <p class="notice">TemporalGAT 已完成训练，但当前小规模合成数据上线性趋势 baseline 误差更低；页面只展示实验指标，不夸大模型效果。</p>
+      </article>
+      <article class="card">
+        <h2>数据库与 DataLoader</h2>
+        <div class="status {% if summary.database.ok %}ok{% endif %}">数据库：{% if summary.database.ok %}已连接{% else %}不可用{% endif %}<br>DataLoader：{{ summary.loader.status|default:"unavailable" }} · 窗口形状 [batch, 3, 35]</div>
+        <div class="table-wrap"><table><thead><tr><th>核心表</th><th>行数</th></tr></thead><tbody>
+          {% for name, count in summary.counts.items %}<tr><td><code>{{ name }}</code></td><td>{{ count }}</td></tr>{% endfor %}
+        </tbody></table></div>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top:16px">
+      <h2>上传简历：即时分析（不落库）</h2>
+      <p>支持 UTF-8 编码的 <code>.txt</code>、<code>.md</code>、<code>.csv</code>，大小不超过 1 MB。文件只在本次请求内存中解析，数据库和训练数据不会改变。</p>
+      <form id="upload-form" enctype="multipart/form-data">
+        <div class="form-grid">
+          <label>简历文件<input id="resume-file" type="file" name="resume" accept=".txt,.md,.csv" required></label>
+          <label>当前职位（可选，留空自动推断）<select id="upload-current" name="current_job"><option value="">自动推断</option></select></label>
+          <label>目标职位（可选）<select id="upload-target" name="target_job"><option value="">自动选择推荐首位</option></select></label>
+        </div>
+        <div class="actions"><button type="submit">分析简历并生成规划</button><span id="upload-status" class="status">等待上传…</span></div>
+      </form>
+      <div id="upload-result" class="result" hidden>
+        <div id="recognized-skills"></div>
+        <div class="grid two">
+          <div><h3>动态职位推荐</h3><div id="upload-recommendations" class="table-wrap"></div></div>
+          <div><h3>目标职位技能缺口</h3><div id="upload-gap" class="table-wrap"></div></div>
+        </div>
+        <div><h3>职业发展路径</h3><div id="upload-path"></div></div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:16px">
+      <h2>已有用户查询</h2>
+      <p>用于对比 300 条基准简历的离线推荐、缺口、路径与 6 个月 baseline 预测。</p>
+      <div class="form-grid">
+        <label>用户 ID<input id="user-id" value="u001" maxlength="20"></label>
+        <label>目标职位<select id="demo-occupation"><option value="15-1252.00">加载职位…</option></select></label>
+      </div>
+      <div class="actions"><button type="button" onclick="loadDemo()">查询基准用户</button><span id="demo-status" class="status">等待查询…</span></div>
+      <pre id="demo-output" class="status" style="margin-top:12px;max-height:340px;overflow:auto">结果将显示在这里</pre>
+    </section>
+
+    <section class="card" style="margin-top:16px">
+      <h2>职位—技能二部图</h2>
+      <p>左侧为职位节点，右侧为技能节点，边权表示清洗后的职位技能需求权重。</p>
+      <img src="/bipartite-graph.svg" alt="职位—技能二部图">
+    </section>
+    <footer>CareerGraph Recommender · 本地 Django 演示 · 上传简历不会写入 SQLite</footer>
+  </main>
 
   <script>
-    async function readJson(url) {
-      const response = await fetch(url);
+    const $ = (id) => document.getElementById(id);
+    const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    async function jsonRequest(url, options) {
+      const response = await fetch(url, options);
       const payload = await response.json();
-      return { status: response.status, payload };
+      return { response, payload };
     }
-
+    function fillOccupations(rows) {
+      ['upload-current','upload-target','demo-occupation'].forEach((id) => {
+        const select = $(id); const keep = id === 'upload-current' ? '<option value="">自动推断</option>' : id === 'upload-target' ? '<option value="">自动选择推荐首位</option>' : '';
+        select.innerHTML = keep + rows.map((row) => `<option value="${esc(row.occupation_id)}">${esc(row.occupation_name_zh)} · ${esc(row.occupation_id)}</option>`).join('');
+      });
+      $('demo-occupation').value = '15-1252.00'; $('upload-target').value = '15-1252.00';
+    }
+    function table(headers, rows) {
+      if (!rows || !rows.length) return '<p class="status">暂无结果</p>';
+      return `<table><thead><tr>${headers.map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map((row) => `<tr>${row.map((cell) => `<td>${esc(cell)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+    }
+    function renderUpload(payload) {
+      $('upload-result').hidden = false;
+      const skills = payload.recognized_skills || [];
+      $('recognized-skills').innerHTML = `<h3>识别技能（${payload.skill_count} 项）</h3><div>${skills.map((s) => `<span class="pill">${esc(s.skill_name_zh)} · ${esc(s.level)}</span>`).join('') || '<span class="status">未识别到标准技能，已使用基础技能向量。</span>'}</div><div class="skill-bars">${skills.map((s) => `<div class="skill-row"><span>${esc(s.skill_name_zh)}</span><span class="bar"><span class="fill" style="width:${Math.round(Number(s.level) * 100)}%"></span></span><span>${Math.round(Number(s.level) * 100)}%</span></div>`).join('')}</div>`;
+      $('upload-recommendations').innerHTML = table(['排名','职位','匹配度','缺口','预计补全小时'], (payload.recommendations || []).map((r) => [r.rank, r.candidate_job_name, r.match_score, r.gap_score, r.estimated_training_hours]));
+      $('upload-gap').innerHTML = table(['技能','当前水平','职位需求','缺口'], (payload.skill_gap.skills || []).slice(0, 8).map((s) => [s.skill_name_zh, s.current_level, s.demand_weight, s.gap]));
+      const path = payload.career_path || {}; const names = path.path_names || [];
+      $('upload-path').innerHTML = `<div class="path">${names.length ? names.map((name, i) => `${i ? '<i>→</i>' : ''}<span>${esc(name)}</span>`).join('') : '<span>暂无三跳以内可行路径</span>'}</div><p>路径可行性：${esc(path.path_probability)} · 跳数：${esc(path.path_length)}</p>`;
+    }
+    async function init() {
+      try { const {payload} = await jsonRequest('/api/occupations/'); if (payload.status === 'ok') fillOccupations(payload.occupations); } catch (error) { $('upload-status').textContent = '职位字典加载失败'; }
+    }
+    $('upload-form').addEventListener('submit', async (event) => {
+      event.preventDefault(); const status = $('upload-status'); status.className = 'status'; status.textContent = '解析中…';
+      const file = $('resume-file').files[0]; if (!file) { status.className = 'status error'; status.textContent = '请选择简历文件'; return; }
+      try {
+        const {response, payload} = await jsonRequest('/api/resume-upload/', {method:'POST', body:new FormData($('upload-form'))});
+        if (!response.ok || payload.status !== 'ok') throw new Error(payload.error || '分析失败');
+        status.className = 'status ok'; status.textContent = `已完成：${payload.filename} · 仅内存分析 · persisted=false`; renderUpload(payload);
+      } catch (error) { status.className = 'status error'; status.textContent = error.message; $('upload-result').hidden = true; }
+    });
     async function loadDemo() {
-      const userId = encodeURIComponent(document.getElementById('user-id').value.trim());
-      const occupationId = encodeURIComponent(document.getElementById('occupation-id').value.trim());
-      const output = document.getElementById('demo-output');
-      if (!userId || !occupationId) {
-        output.textContent = '请填写用户 ID 和职位 ID';
-        return;
-      }
-      output.textContent = '查询中…';
-      const [recommend, gap, path, forecast] = await Promise.all([
-        readJson(`/api/recommend/?user_id=${userId}&top_k=5`),
-        readJson(`/api/skill-gap/?user_id=${userId}&occupation_id=${occupationId}`),
-        readJson(`/api/career-path/?user_id=${userId}&occupation_id=${occupationId}`),
-        readJson(`/api/forecast/?user_id=${userId}&months=6`),
-      ]);
-      output.textContent = JSON.stringify({recommend, gap, path, forecast}, null, 2);
+      const userId = encodeURIComponent($('user-id').value.trim()); const occupationId = encodeURIComponent($('demo-occupation').value); const status = $('demo-status');
+      if (!userId || !occupationId) { status.className='status error'; status.textContent='请填写用户 ID 和目标职位'; return; }
+      status.className='status'; status.textContent='查询中…';
+      try {
+        const results = await Promise.all(['/api/recommend/?user_id='+userId+'&top_k=5','/api/skill-gap/?user_id='+userId+'&occupation_id='+occupationId,'/api/career-path/?user_id='+userId+'&occupation_id='+occupationId,'/api/forecast/?user_id='+userId+'&months=6'].map((url) => jsonRequest(url)));
+        $('demo-output').textContent = JSON.stringify(Object.fromEntries(results.map((item, index) => [['recommend','gap','path','forecast'][index], item.payload])), null, 2); status.className='status ok'; status.textContent='查询完成';
+      } catch (error) { status.className='status error'; status.textContent='请求失败：'+error.message; }
     }
+    init();
   </script>
 </body>
 </html>
