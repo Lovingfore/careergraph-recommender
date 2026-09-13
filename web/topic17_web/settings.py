@@ -1,12 +1,15 @@
 """Small Django configuration; data access lives in src.database."""
 
 from pathlib import Path
+import os
 
 
 BASE_DIR = Path(__file__).resolve().parents[2]
 SECRET_KEY = "topic17-local-demo-key"
 DEBUG = True
 ALLOWED_HOSTS = ["127.0.0.1", "localhost", "testserver"]
+if os.environ.get("CAREERGRAPH_ALLOW_NETWORK", "").strip().lower() in {"1", "true", "yes"}:
+    ALLOWED_HOSTS = ["*"]
 ROOT_URLCONF = "web.topic17_web.urls"
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

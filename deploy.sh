@@ -87,7 +87,7 @@ if ((SKIP_INSTALL == 0)); then
   fi
 fi
 
-if ((REFRESH_FROM_RAW == 1)) || [[ ! -f "data/clean/occupations.csv" ]] || [[ ! -f "data/clean/skills.csv" ]] || [[ ! -f "data/clean/occupation_skill.csv" ]] || [[ ! -f "data/clean/resumes_zh.csv" ]]; then
+if ((REFRESH_FROM_RAW == 1)) || [[ ! -f "data/clean/occupations.csv" ]] || [[ ! -f "data/clean/skills.csv" ]] || [[ ! -f "data/clean/occupation_skill.csv" ]] || [[ ! -f "data/clean/resumes_zh.csv" ]] || [[ ! -f "data/clean/job_transitions.csv" ]] || [[ ! -f "data/clean/user_profiles.csv" ]] || [[ ! -f "data/clean/user_skill_events.csv" ]]; then
   run_step "准备数据集" src/prepare_dataset.py
 else
   echo
@@ -106,9 +106,17 @@ run_step "执行阶段验收" src/verify_stage1.py --db-path artifacts/topic17.s
 echo
 echo "部署准备完成。"
 if ((START_WEB == 1)); then
+  if [[ "$LISTEN_ADDRESS" != "127.0.0.1" && "$LISTEN_ADDRESS" != "localhost" ]]; then
+    export CAREERGRAPH_ALLOW_NETWORK=1
+    echo "Network binding enabled for this process (Django ALLOWED_HOSTS=*)"
+  fi
   echo "启动 Web：http://${LISTEN_ADDRESS}:${PORT}/"
   exec "$PYTHON" web/manage.py runserver "${LISTEN_ADDRESS}:${PORT}"
 else
-  echo "启动 Web：$PYTHON web/manage.py runserver ${LISTEN_ADDRESS}:${PORT}"
+  if [[ "$LISTEN_ADDRESS" != "127.0.0.1" && "$LISTEN_ADDRESS" != "localhost" ]]; then
+    echo "启动 Web：CAREERGRAPH_ALLOW_NETWORK=1 $PYTHON web/manage.py runserver ${LISTEN_ADDRESS}:${PORT}"
+  else
+    echo "启动 Web：$PYTHON web/manage.py runserver ${LISTEN_ADDRESS}:${PORT}"
+  fi
   echo "如需直接启动，请添加参数：--start-web"
 fi

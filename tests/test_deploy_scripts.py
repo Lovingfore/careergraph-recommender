@@ -22,6 +22,7 @@ class DeploymentScriptTests(unittest.TestCase):
         self.assertIn("-SkipInstall", content)
         self.assertIn("sys.version_info >= (3, 10)", content)
         self.assertIn("existing .venv Python", content)
+        self.assertIn("CAREERGRAPH_ALLOW_NETWORK", content)
         self.assertNotRegex(content, re.compile(r"[A-Za-z]:\\Project_all\\"))
         self.assertNotIn("Lovin", content)
 
@@ -46,6 +47,9 @@ class DeploymentScriptTests(unittest.TestCase):
         self.assertIn("--refresh-from-raw", content)
         self.assertIn('dirname "${BASH_SOURCE[0]}"', content)
         self.assertIn("existing .venv Python", content)
+        self.assertIn("CAREERGRAPH_ALLOW_NETWORK", content)
+        for filename in ("job_transitions.csv", "user_profiles.csv", "user_skill_events.csv"):
+            self.assertIn(filename, content)
 
     def test_windows_double_click_wrapper_forwards_arguments(self):
         content = (PROJECT_ROOT / "deploy.bat").read_text(encoding="utf-8")
@@ -62,6 +66,20 @@ class DeploymentScriptTests(unittest.TestCase):
         self.assertIn("Invoke-Step", content)
         self.assertIn("$LASTEXITCODE", content)
         self.assertIn("Reuse checked-in clean dataset", content)
+        for filename in ("job_transitions.csv", "user_profiles.csv", "user_skill_events.csv"):
+            self.assertIn(filename, content)
+        self.assertNotIn("py -3.12 -m venv", content)
+        self.assertIn("sys.version_info >= (3, 10)", content)
+
+    def test_django_network_allowlist_is_opt_in(self):
+        content = (PROJECT_ROOT / "web/topic17_web/settings.py").read_text(encoding="utf-8")
+        self.assertIn("CAREERGRAPH_ALLOW_NETWORK", content)
+        self.assertIn('ALLOWED_HOSTS = ["*"]', content)
+
+    def test_web_network_binding_has_explicit_host_allowlist_opt_in(self):
+        content = (PROJECT_ROOT / "web/topic17_web/settings.py").read_text(encoding="utf-8")
+        self.assertIn("CAREERGRAPH_ALLOW_NETWORK", content)
+        self.assertIn("ALLOWED_HOSTS", content)
 
 
 if __name__ == "__main__":

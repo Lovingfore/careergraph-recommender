@@ -67,6 +67,8 @@ bash deploy.sh --train-model --start-web
 
 常用参数：`-SkipInstall` / `--skip-install` 跳过依赖安装；`-Host`、`-Port` / `--host`、`--port` 修改 Web 监听地址和端口；`-RefreshFromRaw` / `--refresh-from-raw` 使用 `data/raw` 中的 O*NET 原始文件重新生成 clean 数据。默认不要求克隆完整 O*NET 原始包，因为仓库已经提交了可运行的 clean 教学数据；只有显式刷新时才需要先按 [`data/raw/README.md`](data/raw/README.md) 下载并解压 O*NET。部署脚本不会上传简历或创建外部服务，但数据库初始化会在事务内清空并重建六张核心表，数据准备也会覆盖 `data/clean` 中对应的派生 CSV；如需保留自定义数据，请先备份。`--train-model` 仅在需要 TemporalGAT 训练时安装可选依赖。若目标设备无法访问 PyPI，可先在可联网设备完成依赖安装，再使用跳过安装参数运行流水线。
 
+如果需要让同一局域网的其他设备访问，可使用 `-Host 0.0.0.0` / `--host 0.0.0.0`；脚本会仅为本次开发服务器进程设置 `CAREERGRAPH_ALLOW_NETWORK=1`，从而放宽 Django `ALLOWED_HOSTS`。这是课程演示用开发配置，不建议直接暴露到公网；生产部署应使用反向代理、HTTPS 和明确的域名白名单。
+
 脚本文件：
 
 - `deploy.ps1`：跨 Windows 设备的主部署入口。

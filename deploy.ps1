@@ -96,12 +96,20 @@ Invoke-PythonStep "Run data, feature, database, graph, and verification pipeline
 
 Write-Host "`nDeployment preparation complete." -ForegroundColor Green
 if ($StartWeb) {
+    if ($ListenAddress -ne "127.0.0.1" -and $ListenAddress -ne "localhost") {
+        $env:CAREERGRAPH_ALLOW_NETWORK = "1"
+        Write-Host "Network binding enabled for this process (Django ALLOWED_HOSTS=*)" -ForegroundColor Yellow
+    }
     Write-Host "Starting Web: http://$ListenAddress`:$Port/" -ForegroundColor Green
     & $python web\manage.py runserver "$ListenAddress`:$Port"
     if ($LASTEXITCODE -ne 0) {
         throw ("Web server exited (exit code {0})" -f $LASTEXITCODE)
     }
 } else {
-    Write-Host "Start Web: $python web\manage.py runserver $ListenAddress`:$Port" -ForegroundColor Yellow
+    if ($ListenAddress -ne "127.0.0.1" -and $ListenAddress -ne "localhost") {
+        Write-Host "Start Web: `$env:CAREERGRAPH_ALLOW_NETWORK='1'; & $python web\manage.py runserver $ListenAddress`:$Port" -ForegroundColor Yellow
+    } else {
+        Write-Host "Start Web: $python web\manage.py runserver $ListenAddress`:$Port" -ForegroundColor Yellow
+    }
     Write-Host "To start automatically, add: -StartWeb" -ForegroundColor Yellow
 }
