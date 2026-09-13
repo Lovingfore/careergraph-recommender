@@ -48,12 +48,13 @@ git clone https://github.com/Lovingfore/careergraph-recommender.git
 cd careergraph-recommender
 ```
 
-Windows 用户可以直接双击 `deploy.bat`；它会安装基础依赖、重建数据/特征/SQLite/二部图、执行验收，然后启动 Web。也可以在 PowerShell 中使用参数：
+Windows 用户可以直接双击 `deploy.bat`；它会安装基础依赖、复用仓库内已提交的 clean 数据并重建特征/SQLite/二部图、执行验收，然后启动 Web。也可以在 PowerShell 中使用参数：
 
 ```powershell
 .\deploy.ps1                 # 部署并打印 Web 启动命令
 .\deploy.ps1 -StartWeb       # 部署完成后启动 Web
 .\deploy.ps1 -TrainModel -StartWeb
+.\deploy.ps1 -RefreshFromRaw # 已准备 O*NET 原始文件时重新清洗
 ```
 
 macOS/Linux 使用：
@@ -64,7 +65,7 @@ bash deploy.sh --start-web             # 部署完成后启动 Web
 bash deploy.sh --train-model --start-web
 ```
 
-常用参数：`-SkipInstall` / `--skip-install` 跳过依赖安装；`-Host`、`-Port` / `--host`、`--port` 修改 Web 监听地址和端口。部署脚本不会上传简历、不会创建外部服务，也不会删除已有数据；`--train-model` 仅在需要 TemporalGAT 训练时安装可选依赖。若目标设备无法访问 PyPI，可先在可联网设备完成依赖安装，再使用跳过安装参数运行流水线。
+常用参数：`-SkipInstall` / `--skip-install` 跳过依赖安装；`-Host`、`-Port` / `--host`、`--port` 修改 Web 监听地址和端口；`-RefreshFromRaw` / `--refresh-from-raw` 使用 `data/raw` 中的 O*NET 原始文件重新生成 clean 数据。默认不要求克隆完整 O*NET 原始包，因为仓库已经提交了可运行的 clean 教学数据；只有显式刷新时才需要先按 [`data/raw/README.md`](data/raw/README.md) 下载并解压 O*NET。部署脚本不会上传简历或创建外部服务，但数据库初始化会在事务内清空并重建六张核心表，数据准备也会覆盖 `data/clean` 中对应的派生 CSV；如需保留自定义数据，请先备份。`--train-model` 仅在需要 TemporalGAT 训练时安装可选依赖。若目标设备无法访问 PyPI，可先在可联网设备完成依赖安装，再使用跳过安装参数运行流水线。
 
 脚本文件：
 

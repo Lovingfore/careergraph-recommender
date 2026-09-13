@@ -16,9 +16,12 @@ class DeploymentScriptTests(unittest.TestCase):
         content = (PROJECT_ROOT / "deploy.ps1").read_text(encoding="utf-8")
         self.assertIn("[switch]$TrainModel", content)
         self.assertIn("[switch]$StartWeb", content)
+        self.assertIn("[switch]$RefreshFromRaw", content)
         self.assertIn("requirements.txt", content)
         self.assertIn("run_all.ps1", content)
         self.assertIn("-SkipInstall", content)
+        self.assertIn("sys.version_info >= (3, 10)", content)
+        self.assertIn("existing .venv Python", content)
         self.assertNotRegex(content, re.compile(r"[A-Za-z]:\\Project_all\\"))
         self.assertNotIn("Lovin", content)
 
@@ -40,6 +43,9 @@ class DeploymentScriptTests(unittest.TestCase):
         self.assertNotRegex(content, re.compile(r"[A-Za-z]:\\Project_all\\"))
         self.assertNotIn("Lovin", content)
         self.assertIn("SKIP_INSTALL == 1", content)
+        self.assertIn("--refresh-from-raw", content)
+        self.assertIn('dirname "${BASH_SOURCE[0]}"', content)
+        self.assertIn("existing .venv Python", content)
 
     def test_windows_double_click_wrapper_forwards_arguments(self):
         content = (PROJECT_ROOT / "deploy.bat").read_text(encoding="utf-8")
@@ -51,7 +57,11 @@ class DeploymentScriptTests(unittest.TestCase):
     def test_existing_pipeline_can_skip_dependency_installation(self):
         content = (PROJECT_ROOT / "run_all.ps1").read_text(encoding="utf-8")
         self.assertIn("[switch]$SkipInstall", content)
+        self.assertIn("[switch]$RefreshFromRaw", content)
         self.assertIn("if (-not $SkipInstall)", content)
+        self.assertIn("Invoke-Step", content)
+        self.assertIn("$LASTEXITCODE", content)
+        self.assertIn("Reuse checked-in clean dataset", content)
 
 
 if __name__ == "__main__":

@@ -3,6 +3,7 @@ param(
     [switch]$TrainModel,
     [switch]$StartWeb,
     [switch]$SkipInstall,
+    [switch]$RefreshFromRaw,
     [Alias("Host")]
     [string]$ListenAddress = "127.0.0.1",
     [ValidateRange(1, 65535)]
@@ -26,7 +27,7 @@ function Find-SystemPython {
         if ($null -eq $command) {
             continue
         }
-        & $command.Source @($candidate.Args) -c "import sys; print(sys.version_info[:2])" *> $null
+        & $command.Source @($candidate.Args) -c "import sys; raise SystemExit(0 if sys.version_info >= (3, 10) else 1)" *> $null
         if ($LASTEXITCODE -eq 0) {
             return $candidate
         }
@@ -67,6 +68,10 @@ if (-not (Test-Path -LiteralPath $venvPython)) {
 }
 
 $python = (Resolve-Path -LiteralPath $venvPython).Path
+$versionCheck = & $python -c "import sys; raise SystemExit(0 if sys.version_info >= (3, 10) else 1)"
+if ($LASTEXITCODE -ne 0) {
+    throw "The existing .venv Python must be version 3.10 or newer. Remove .venv and rerun without -SkipInstall."
+}
 if (-not $SkipInstall) {
     Invoke-PythonStep "Install base dependencies" { & $python -m pip install --disable-pip-version-check -r requirements.txt }
     if ($TrainModel) {
@@ -81,6 +86,9 @@ if ($TrainModel) {
 }
 if ($SkipInstall) {
     $pipelineArgs += "-SkipInstall"
+}
+if ($RefreshFromRaw) {
+    $pipelineArgs += "-RefreshFromRaw"
 }
 Invoke-PythonStep "Run data, feature, database, graph, and verification pipeline" {
     & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $pipeline @pipelineArgs

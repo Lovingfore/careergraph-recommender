@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PROJECT_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$PROJECT_ROOT"
 
 TRAIN_MODEL=0
 START_WEB=0
 SKIP_INSTALL=0
+REFRESH_FROM_RAW=0
 LISTEN_ADDRESS="127.0.0.1"
 PORT=8000
 
@@ -18,6 +19,7 @@ usage() {
   --train-model              安装可选模型依赖并训练 TemporalGAT
   --start-web                完成流水线后启动 Django Web 服务
   --skip-install             跳过 pip 安装，直接复用当前虚拟环境
+  --refresh-from-raw         使用 data/raw 中的 O*NET 原始文件重建 clean 数据
   --host ADDRESS             Web 监听地址（默认 127.0.0.1）
   --port PORT                Web 端口（默认 8000）
   -h, --help                显示帮助
@@ -29,6 +31,7 @@ while (($# > 0)); do
     --train-model) TRAIN_MODEL=1 ;;
     --start-web) START_WEB=1 ;;
     --skip-install) SKIP_INSTALL=1 ;;
+    --refresh-from-raw) REFRESH_FROM_RAW=1 ;;
     --host) shift; LISTEN_ADDRESS="${1:?--host 需要地址}" ;;
     --port) shift; PORT="${1:?--port 需要端口}" ;;
     -h|--help) usage; exit 0 ;;
@@ -44,6 +47,10 @@ fi
 
 if [[ -x ".venv/bin/python" ]]; then
   PYTHON="$(cd .venv/bin && pwd)/python"
+  if ! "$PYTHON" -c 'import sys; assert sys.version_info >= (3, 10)' >/dev/null 2>&1; then
+    echo "The existing .venv Python must be version 3.10 or newer." >&2
+    exit 1
+  fi
 else
   if ((SKIP_INSTALL == 1)); then
     echo "未找到 .venv，不能跳过依赖安装。请移除 --skip-install 以创建环境并安装依赖。" >&2
@@ -80,7 +87,12 @@ if ((SKIP_INSTALL == 0)); then
   fi
 fi
 
-run_step "准备数据集" src/prepare_dataset.py
+if ((REFRESH_FROM_RAW == 1)) || [[ ! -f "data/clean/occupations.csv" ]] || [[ ! -f "data/clean/skills.csv" ]] || [[ ! -f "data/clean/occupation_skill.csv" ]] || [[ ! -f "data/clean/resumes_zh.csv" ]]; then
+  run_step "准备数据集" src/prepare_dataset.py
+else
+  echo
+  echo "==> Reuse checked-in clean dataset (use --refresh-from-raw to rebuild)"
+fi
 run_step "生成技能预测 baseline" src/forecast_skills.py
 run_step "构建特征" src/build_features.py
 run_step "评估推荐结果" src/evaluate_recommendation.py
