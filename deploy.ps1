@@ -107,9 +107,9 @@ if ($StartWeb) {
     }
 } else {
     if ($ListenAddress -ne "127.0.0.1" -and $ListenAddress -ne "localhost") {
-        Write-Host "Start Web: `$env:CAREERGRAPH_ALLOW_NETWORK='1'; & $python web\manage.py runserver $ListenAddress`:$Port" -ForegroundColor Yellow
+        Write-Host ("Start Web: `$env:CAREERGRAPH_ALLOW_NETWORK='1'; & `"{0}`" web\manage.py runserver {1}:{2}" -f $python, $ListenAddress, $Port) -ForegroundColor Yellow
     } else {
-        Write-Host "Start Web: $python web\manage.py runserver $ListenAddress`:$Port" -ForegroundColor Yellow
+        Write-Host ("Start Web: & `"{0}`" web\manage.py runserver {1}:{2}" -f $python, $ListenAddress, $Port) -ForegroundColor Yellow
     }
     Write-Host "To start automatically, add: -StartWeb" -ForegroundColor Yellow
 }

@@ -58,6 +58,9 @@ if ($LASTEXITCODE -ne 0) {
 }
 if (-not $SkipInstall) {
     Invoke-Step "Install base dependencies" { & $python -m pip install -r requirements.txt }
+    if ($TrainModel) {
+        Invoke-Step "Install optional model dependencies" { & $python -m pip install -r requirements-optional-models.txt }
+    }
 }
 
 $requiredCleanFiles = @(

@@ -114,9 +114,9 @@ if ((START_WEB == 1)); then
   exec "$PYTHON" web/manage.py runserver "${LISTEN_ADDRESS}:${PORT}"
 else
   if [[ "$LISTEN_ADDRESS" != "127.0.0.1" && "$LISTEN_ADDRESS" != "localhost" ]]; then
-    echo "启动 Web：CAREERGRAPH_ALLOW_NETWORK=1 $PYTHON web/manage.py runserver ${LISTEN_ADDRESS}:${PORT}"
+    printf '启动 Web：CAREERGRAPH_ALLOW_NETWORK=1 "%s" web/manage.py runserver %s:%s\n' "$PYTHON" "$LISTEN_ADDRESS" "$PORT"
   else
-    echo "启动 Web：$PYTHON web/manage.py runserver ${LISTEN_ADDRESS}:${PORT}"
+    printf '启动 Web："%s" web/manage.py runserver %s:%s\n' "$PYTHON" "$LISTEN_ADDRESS" "$PORT"
   fi
   echo "如需直接启动，请添加参数：--start-web"
 fi

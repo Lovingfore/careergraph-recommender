@@ -23,6 +23,7 @@ class DeploymentScriptTests(unittest.TestCase):
         self.assertIn("sys.version_info >= (3, 10)", content)
         self.assertIn("existing .venv Python", content)
         self.assertIn("CAREERGRAPH_ALLOW_NETWORK", content)
+        self.assertIn('& `"{0}`" web\\manage.py runserver', content)
         self.assertNotRegex(content, re.compile(r"[A-Za-z]:\\Project_all\\"))
         self.assertNotIn("Lovin", content)
 
@@ -48,6 +49,7 @@ class DeploymentScriptTests(unittest.TestCase):
         self.assertIn('dirname "${BASH_SOURCE[0]}"', content)
         self.assertIn("existing .venv Python", content)
         self.assertIn("CAREERGRAPH_ALLOW_NETWORK", content)
+        self.assertIn('"%s" web/manage.py runserver', content)
         for filename in ("job_transitions.csv", "user_profiles.csv", "user_skill_events.csv"):
             self.assertIn(filename, content)
 
@@ -63,6 +65,8 @@ class DeploymentScriptTests(unittest.TestCase):
         self.assertIn("[switch]$SkipInstall", content)
         self.assertIn("[switch]$RefreshFromRaw", content)
         self.assertIn("if (-not $SkipInstall)", content)
+        self.assertIn("requirements-optional-models.txt", content)
+        self.assertIn("if ($TrainModel)", content)
         self.assertIn("Invoke-Step", content)
         self.assertIn("$LASTEXITCODE", content)
         self.assertIn("Reuse checked-in clean dataset", content)
