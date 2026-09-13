@@ -1,5 +1,6 @@
 param(
-    [switch]$TrainModel
+    [switch]$TrainModel,
+    [switch]$SkipInstall
 )
 
 $ErrorActionPreference = 'Stop'
@@ -10,7 +11,9 @@ if (-not (Test-Path -LiteralPath '.venv\Scripts\python.exe')) {
 }
 
 $python = (Resolve-Path '.venv\Scripts\python.exe').Path
-& $python -m pip install -r requirements.txt
+if (-not $SkipInstall) {
+    & $python -m pip install -r requirements.txt
+}
 & $python src\prepare_dataset.py
 & $python src\forecast_skills.py
 & $python src\build_features.py

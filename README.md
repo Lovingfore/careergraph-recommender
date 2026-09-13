@@ -39,6 +39,39 @@ O*NET 职位和技能表是真实公开数据，来源为 O*NET 30.2 Database，
 
 简历主数据文件为 `data/clean/resumes_zh.csv`，每行包含教育背景、专业、城市、工作年限、当前/目标职位、技能熟练度、项目经历和完整中文简历文本；`user_profiles.csv` 和 `user_skill_events.csv` 是由该文件自动派生的模型输入。
 
+## 跨设备一键部署
+
+仓库不提交本机 `.venv`，部署脚本会根据当前设备自动创建虚拟环境并使用项目相对路径。先在目标设备安装 Python 3.10+，再克隆仓库：
+
+```bash
+git clone https://github.com/Lovingfore/careergraph-recommender.git
+cd careergraph-recommender
+```
+
+Windows 用户可以直接双击 `deploy.bat`；它会安装基础依赖、重建数据/特征/SQLite/二部图、执行验收，然后启动 Web。也可以在 PowerShell 中使用参数：
+
+```powershell
+.\deploy.ps1                 # 部署并打印 Web 启动命令
+.\deploy.ps1 -StartWeb       # 部署完成后启动 Web
+.\deploy.ps1 -TrainModel -StartWeb
+```
+
+macOS/Linux 使用：
+
+```bash
+bash deploy.sh                         # 部署并打印 Web 启动命令
+bash deploy.sh --start-web             # 部署完成后启动 Web
+bash deploy.sh --train-model --start-web
+```
+
+常用参数：`-SkipInstall` / `--skip-install` 跳过依赖安装；`-Host`、`-Port` / `--host`、`--port` 修改 Web 监听地址和端口。部署脚本不会上传简历、不会创建外部服务，也不会删除已有数据；`--train-model` 仅在需要 TemporalGAT 训练时安装可选依赖。若目标设备无法访问 PyPI，可先在可联网设备完成依赖安装，再使用跳过安装参数运行流水线。
+
+脚本文件：
+
+- `deploy.ps1`：跨 Windows 设备的主部署入口。
+- `deploy.bat`：Windows 双击包装器，默认部署后启动 Web。
+- `deploy.sh`：macOS/Linux 部署入口。
+
 ## 一键运行
 
 在项目根目录中执行：
