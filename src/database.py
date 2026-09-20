@@ -1,9 +1,8 @@
-"""SQLite schema, transactional CSV importer, and query helpers for Topic 17.
+"""Topic 17 的 SQLite 数据库、事务式 CSV 导入器和查询辅助函数。
 
-The CSV files under ``data/clean`` remain the auditable exchange format.  This
-module provides one shared database service used by the command line verifier
-and the Django web layer; it deliberately does not introduce a second ORM
-schema.
+``data/clean`` 下的 CSV 是便于审计、交换和重建的事实层；SQLite 是供
+验收脚本与 Django Web 层查询的运行时查询层。本模块只维护这一份关系
+模式，不再引入另一套 ORM 表结构。
 """
 
 from __future__ import annotations
@@ -24,6 +23,8 @@ TABLE_NAMES = (
 )
 
 
+# 表的创建顺序体现外键依赖：先建职位/技能字典，再建关系、用户和转移表；
+# 索引最后创建，保证导入和查询都使用当前六张核心表。
 SCHEMA_SQL = """
 CREATE TABLE IF NOT EXISTS occupations (
     occupation_id TEXT PRIMARY KEY,
@@ -92,6 +93,7 @@ CREATE INDEX IF NOT EXISTS idx_transitions_to ON job_transitions (to_job);
 
 
 def _connect(db_path: Path) -> sqlite3.Connection:
+    """打开数据库连接，启用外键约束，并返回按列名访问的行对象。"""
     db_path = Path(db_path)
     db_path.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(db_path)
@@ -101,7 +103,7 @@ def _connect(db_path: Path) -> sqlite3.Connection:
 
 
 def initialize_database(db_path: Path) -> None:
-    """Create the six core tables and indexes if they do not already exist."""
+    """创建六张核心表及索引；已存在的表保持不变，供后续导入复用。"""
 
     conn = _connect(Path(db_path))
     try:
@@ -112,11 +114,13 @@ def initialize_database(db_path: Path) -> None:
 
 
 def _read_csv(path: Path) -> list[dict[str, str]]:
+    """以 UTF-8（兼容 BOM）读取一个 CSV，先转成字典行供契约校验和插入。"""
     with Path(path).open("r", encoding="utf-8-sig", newline="") as handle:
         return list(csv.DictReader(handle))
 
 
 def _required_columns(rows: list[dict[str, str]], path: Path, columns: set[str]) -> None:
+    """检查 CSV 非空且包含调用方声明的字段契约，避免半途才暴露列缺失。"""
     if not rows:
         raise ValueError(f"CSV is empty: {path}")
     missing = columns - set(rows[0])
@@ -125,11 +129,11 @@ def _required_columns(rows: list[dict[str, str]], path: Path, columns: set[str])
 
 
 def load_csv_data(db_path: Path, data_dir: Path) -> dict[str, int]:
-    """Replace database contents with clean CSV data in one transaction.
+    """按外键依赖顺序将 clean CSV 全量替换进数据库，并返回各表行数。
 
-    Any parsing, constraint, or post-import integrity error raises an
-    exception and rolls the transaction back, leaving the previous database
-    contents untouched.
+    六个文件先全部读取和校验，随后在同一事务内删除旧数据、批量插入新
+    数据并执行一致性检查。任何解析、约束或校验异常都会回滚，因此失败
+    时保留导入前的数据库内容，避免出现半套数据。
     """
 
     data_dir = Path(data_dir)
@@ -145,10 +149,13 @@ def load_csv_data(db_path: Path, data_dir: Path) -> dict[str, int]:
     conn = _connect(Path(db_path))
     try:
         conn.executescript(SCHEMA_SQL)
-        # Delete children first so this also works with foreign_keys enabled.
+        # 删除与插入都按外键依赖处理：先删子表再删父表，避免外键约束阻止
+        # 重建；后续插入则反向先写字典，再写关系和事件。
         for table in ("user_skill_events", "job_transitions", "user_profiles", "occupation_skill", "skills", "occupations"):
             conn.execute(f"DELETE FROM {table}")
 
+        # executemany 将 CSV 行批量写入，减少逐行往返，同时仍由 SQLite
+        # 外键和 CHECK 约束拦截非法值。
         conn.executemany(
             "INSERT INTO occupations (occupation_id, occupation_name, description) VALUES (?, ?, ?)",
             [(r["occupation_id"], r["occupation_name"], r.get("Description", "")) for r in rows["occupations"]],
@@ -183,10 +190,12 @@ def load_csv_data(db_path: Path, data_dir: Path) -> dict[str, int]:
             "INSERT INTO job_transitions (from_job, to_job, transition_count, transition_probability, source) VALUES (?, ?, ?, ?, ?)",
             [(r["from_job"], r["to_job"], int(r["transition_count"]), float(r["transition_probability"]), r["source"]) for r in rows["job_transitions"]],
         )
+        # 提交前再次做孤儿行和转移概率校验；只有全部通过才让新快照生效。
         _validate_connection(conn)
         conn.commit()
         return get_counts_from_connection(conn)
     except Exception:
+        # 回滚覆盖删除、插入和校验期间的全部写入，调用方可据异常定位问题。
         conn.rollback()
         raise
     finally:
@@ -194,6 +203,11 @@ def load_csv_data(db_path: Path, data_dir: Path) -> dict[str, int]:
 
 
 def _validate_connection(conn: sqlite3.Connection) -> None:
+    """检查孤儿外键引用和各起始职位的转移概率和。
+
+    CSV 是否为空由导入前的 ``_required_columns`` 负责，本函数只验证已经写入
+    当前连接的数据之间是否保持引用和概率一致性。
+    """
     orphan_checks = (
         ("occupation_skill", "occupation_id", "occupations", "occupation_id"),
         ("occupation_skill", "skill_id", "skills", "skill_id"),
@@ -216,10 +230,12 @@ def _validate_connection(conn: sqlite3.Connection) -> None:
 
 
 def get_counts_from_connection(conn: sqlite3.Connection) -> dict[str, int]:
+    """在现有连接上返回六张核心表的行数摘要，不额外开启事务。"""
     return {table: int(conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]) for table in TABLE_NAMES}
 
 
 def get_counts(db_path: Path) -> dict[str, int]:
+    """打开并关闭独立连接，返回数据库各核心表的行数摘要。"""
     conn = _connect(Path(db_path))
     try:
         return get_counts_from_connection(conn)
@@ -228,7 +244,11 @@ def get_counts(db_path: Path) -> dict[str, int]:
 
 
 def query_user_profile(db_path: Path, user_id: str) -> dict[str, Any]:
-    """Return a user profile, job names, and chronological skill events."""
+    """查询用户画像、当前/目标职位名称及按月份排序的技能事件。
+
+    返回字典同时保留原始职位 ID、可读名称、事件列表和事件数量；未知
+    ``user_id`` 以 ``KeyError`` 明确告知调用方，而不是返回空画像。
+    """
 
     conn = _connect(Path(db_path))
     try:

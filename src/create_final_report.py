@@ -1,4 +1,9 @@
-"""Generate the final Chinese project report from current artifacts."""
+"""结合当前数据、模型和图谱产物生成中文 Word 项目报告。
+
+构建时会读取 clean/processed/artifacts 中的摘要、CSV、JSON 和图像，用于
+填充数据规模、模型误差等动态字段；脚本中仍有与当前课程版本绑定的说明性
+数字和文字，数据规模或测试基线变化后需要人工复核这些静态内容。
+"""
 
 from __future__ import annotations
 
@@ -26,6 +31,7 @@ OUT = ROOT / "docs" / "reports" / "CareerGraph_Recommender_Final_Report.docx"
 
 
 def _shade(cell, fill: str) -> None:
+    """设置 Word 表格单元格底色，供表头和隔行底纹复用。"""
     properties = cell._tc.get_or_add_tcPr()
     shading = properties.find(qn("w:shd"))
     if shading is None:
@@ -35,6 +41,7 @@ def _shade(cell, fill: str) -> None:
 
 
 def _set_cell_text(cell, text: str, *, bold: bool = False, color: str | None = None) -> None:
+    """清空单元格并按统一字号、颜色和垂直对齐方式写入文本。"""
     cell.text = ""
     paragraph = cell.paragraphs[0]
     paragraph.paragraph_format.space_after = Pt(2)
@@ -47,6 +54,7 @@ def _set_cell_text(cell, text: str, *, bold: bool = False, color: str | None = N
 
 
 def _table(doc: Document, headers: list[str], rows: list[list[object]], widths: list[float] | None = None):
+    """创建带深色表头、隔行底纹和可选列宽的报告表格。"""
     table = doc.add_table(rows=1, cols=len(headers))
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
     table.style = "Table Grid"
@@ -68,6 +76,7 @@ def _table(doc: Document, headers: list[str], rows: list[list[object]], widths: 
 
 
 def _heading(doc: Document, text: str, level: int = 1):
+    """插入统一间距和层级颜色的标题段落。"""
     paragraph = doc.add_heading(text, level=level)
     paragraph.paragraph_format.space_before = Pt(11 if level == 1 else 7)
     paragraph.paragraph_format.space_after = Pt(5)
@@ -75,6 +84,7 @@ def _heading(doc: Document, text: str, level: int = 1):
 
 
 def _bullet(doc: Document, text: str):
+    """插入一个带项目符号和紧凑段后间距的说明段落。"""
     paragraph = doc.add_paragraph(style="List Bullet")
     paragraph.paragraph_format.space_after = Pt(2)
     paragraph.add_run(text)
@@ -82,6 +92,7 @@ def _bullet(doc: Document, text: str):
 
 
 def _code(doc: Document, text: str):
+    """以 Consolas 等宽字体插入可复制的命令或代码块行。"""
     paragraph = doc.add_paragraph()
     paragraph.paragraph_format.left_indent = Inches(0.25)
     paragraph.paragraph_format.space_after = Pt(4)
@@ -94,6 +105,7 @@ def _code(doc: Document, text: str):
 
 
 def _configure(doc: Document) -> None:
+    """配置页面边距、中文字体、标题样式和页脚，确保报告版式一致。"""
     section = doc.sections[0]
     section.top_margin = Inches(0.65)
     section.bottom_margin = Inches(0.65)
@@ -116,9 +128,17 @@ def _configure(doc: Document) -> None:
 
 
 def build_report() -> Path:
+    """读取当前产物、组装章节/表格/图像并保存最终 Word 报告路径。
+
+    数据集摘要、SQLite 行数、推荐特征、预测、评价和二部图摘要会在本次
+    运行时读取；报告模板中的课程版本说明、测试数量和部分示例数字仍是静态
+    文本，重新生成前应与最新验收结果一并复核。
+    """
     clean = ROOT / "data" / "clean"
     processed = ROOT / "data" / "processed"
     artifacts = ROOT / "artifacts"
+    # 以下结构化指标从当前产物读取；后续模板中仍存在课程版本静态说明，
+    # 修改数据规模或验收基线时需同步人工检查。
     summary = json.loads((clean / "dataset_summary.json").read_text(encoding="utf-8"))
     model = json.loads((artifacts / "models" / "evaluation_summary.json").read_text(encoding="utf-8"))
     db_counts = get_counts(artifacts / "topic17.sqlite3")
@@ -129,6 +149,7 @@ def build_report() -> Path:
     topk = pd.read_csv(processed / "topk_recommendations.csv")
     graph_summary = json.loads((processed / "bipartite" / "bipartite_graph_summary.json").read_text(encoding="utf-8"))
 
+    # 先建立文档和全局样式，再按章节追加正文、表格、图像与复现命令。
     doc = Document()
     _configure(doc)
 
@@ -268,6 +289,7 @@ def build_report() -> Path:
     ], [3.7, 3.3])
     doc.add_paragraph("报告生成脚本为 src/create_final_report.py；重新生成时会读取当前 CSV、模型评估 JSON 和图文件，避免手工复制过时数字。")
 
+    # 仅在所有当前产物读取和内容组装成功后写出 Word 文件。
     OUT.parent.mkdir(parents=True, exist_ok=True)
     doc.save(OUT)
     return OUT

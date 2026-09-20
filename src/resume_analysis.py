@@ -1,8 +1,8 @@
-"""In-memory analysis for an uploaded resume.
+"""对上传简历执行不落库的纯内存分析。
 
-The canonical CSV files and SQLite database are intentionally read-only here.
-This module turns a short text resume into a bounded skill vector and applies
-the same transparent hybrid scoring used by the offline recommendation job.
+标准 CSV 与 SQLite 在本模块中始终只读。文本简历先被转换为有界技能向量，再复用
+离线推荐的透明混合评分、技能缺口和职业路径计算；返回结果明确标记
+``persisted=false``，不会改变训练数据或用户画像。
 """
 
 from __future__ import annotations
@@ -23,15 +23,25 @@ SUPPORTED_EXTENSIONS = {".txt", ".md", ".csv"}
 
 
 def _root(root: Path | None) -> Path:
+    """解析分析所需项目根目录，允许测试注入隔离数据目录。"""
+
     return Path(root) if root is not None else PROJECT_ROOT
 
 
 def _cosine(a: np.ndarray, b: np.ndarray) -> float:
+    """计算技能向量余弦相似度，零向量时安全返回 0。"""
+
     denominator = float(np.linalg.norm(a) * np.linalg.norm(b))
     return float(np.dot(a, b) / denominator) if denominator else 0.0
 
 
 def _load_context(root: Path) -> dict[str, Any]:
+    """一次性加载技能别名、职位向量、职位字典与转移图分析上下文。
+
+    英文技能名、中文技能名和常用领域词被映射到统一 skill_id；职位矩阵来自
+    离线特征产物，转移图来自 clean CSV，后续计算因此无需重复访问数据库。
+    """
+
     clean = root / "data" / "clean"
     processed = root / "data" / "processed"
     skills = pd.read_csv(clean / "skills.csv", dtype=str)
@@ -78,12 +88,16 @@ def _load_context(root: Path) -> dict[str, Any]:
 
 
 def _path(graph: dict[str, list[tuple[str, float]]], source: str, target: str, max_hops: int = 3) -> tuple[list[str], float]:
+    """深度优先搜索最多三跳的无环路径，并保留概率乘积最大的方案。"""
+
     if source == target:
         return [source], 1.0
     best_path: list[str] = []
     best_probability = 0.0
 
     def visit(node: str, current_path: list[str], probability: float) -> None:
+        """递归枚举未重复节点的候选路径，并更新当前最大概率。"""
+
         nonlocal best_path, best_probability
         if len(current_path) - 1 >= max_hops:
             return
@@ -103,6 +117,12 @@ def _path(graph: dict[str, list[tuple[str, float]]], source: str, target: str, m
 
 
 def _recommendations(context: dict[str, Any], skill_vector: dict[str, float], current_job: str, target_job: str | None, top_k: int) -> list[dict[str, Any]]:
+    """让临时技能向量复用离线推荐公式，生成当前请求的 Top-K 职位。
+
+    总分仍为 ``0.45 Match - 0.25 Gap + 0.15 Growth + 0.15 Path``，仅用户向量
+    来自本次上传文本，其余职位需求和转移数据与离线构建完全一致。
+    """
+
     job_vectors: pd.DataFrame = context["job_vectors"]
     skill_ids = context["skill_ids"]
     user_vector = np.array([float(skill_vector.get(skill_id, 0.1)) for skill_id in skill_ids], dtype=float)
@@ -146,6 +166,8 @@ def _recommendations(context: dict[str, Any], skill_vector: dict[str, float], cu
 
 
 def _skill_gap(context: dict[str, Any], skill_vector: dict[str, float], target_job: str) -> dict[str, Any]:
+    """比较临时技能向量与目标职位需求，列出所有正向缺口。"""
+
     table = context["occupation_skill"]
     selected = table[table["occupation_id"].astype(str) == target_job].copy()
     selected["current_level"] = selected["skill_id"].astype(str).map(skill_vector).fillna(0.1)
@@ -178,8 +200,14 @@ def analyze_resume_text(
     target_job: str | None = None,
     top_k: int = 5,
 ) -> dict[str, Any]:
-    """Analyze uploaded text without writing any project state."""
+    """分析上传文本并返回推荐、技能缺口和职业路径，不写入项目状态。
 
+    数据链路：文本校验 → 技能别名匹配 → 已识别技能设为 0.75、其余为 0.10
+    → 可选自动推断当前职位 → 推荐排序 → 确定目标职位 → 缺口/路径
+    → 返回 ``persisted=false``。
+    """
+
+    # 文本与职位参数校验：空文本或未知职位立即返回清晰错误。
     if not isinstance(text, str) or not text.strip():
         raise ValueError("简历文本不能为空")
     context = _load_context(_root(root))
@@ -189,14 +217,17 @@ def analyze_resume_text(
     if target_job and str(target_job) not in valid_jobs:
         raise ValueError(f"未知目标职位：{target_job}")
 
+    # 技能识别：统一大小写和空白，按别名长度从长到短匹配，减少短词抢先命中。
     normalized = re.sub(r"\s+", " ", text.casefold()).strip()
     skill_levels = {skill_id: 0.1 for skill_id in context["skill_ids"]}
     recognized_ids: set[str] = set()
     for alias, skill_id in sorted(context["aliases"].items(), key=lambda item: len(item[0]), reverse=True):
         if alias and alias in normalized:
             recognized_ids.add(skill_id)
+    # 临时向量：识别技能赋 0.75，未识别技能保留保守基线 0.10。
     for skill_id in recognized_ids:
         skill_levels[skill_id] = 0.75
+    # 未指定当前职位时，选择与临时技能向量余弦相似度最高的职位。
     if current_job is None:
         vector = np.array([skill_levels[skill_id] for skill_id in context["skill_ids"]], dtype=float)
         current_job = max(
@@ -204,12 +235,14 @@ def analyze_resume_text(
             key=lambda job_id: _cosine(vector, context["job_vectors"].loc[job_id].to_numpy(dtype=float)),
         )
     current_job = str(current_job)
+    # 复用透明推荐公式；目标职位缺省时采用推荐首位，再计算缺口和最大概率路径。
     recommendations = _recommendations(context, skill_levels, current_job, target_job, max(1, min(int(top_k), 50)))
     if target_job is None:
         target_job = recommendations[0]["candidate_job"] if recommendations else current_job
     target_job = str(target_job)
     gap = _skill_gap(context, skill_levels, target_job)
     path, path_probability = _path(context["graph"], current_job, target_job)
+    # 返回值仅属于当前请求，persisted=False 是前端和调用方可检查的不落库声明。
     return {
         "status": "ok",
         "persisted": False,

@@ -1,14 +1,9 @@
-"""Build and export the occupation-skill bipartite graph.
+"""构建并导出职位—技能二部图。
 
-The graph has two disjoint node sets:
-
-* ``occupation:*`` nodes on the left;
-* ``skill:*`` nodes on the right.
-
-Every edge is an occupation-to-skill requirement and carries the cleaned
-``demand_weight`` as its primary weight. The module intentionally keeps this
-representation separate from the existing skill-cooccurrence and occupation
-transition graphs so downstream models can choose the relation they need.
+图包含两类互不重叠的节点：左侧 ``occupation:*`` 职位，右侧
+``skill:*`` 技能；每条职位到技能的边以 clean 数据中的 ``demand_weight``
+为权重。完整关系用于 JSON/CSV 审计和下游计算，``min_demand_weight`` 只
+筛选可视化边，因此不会把完整 420 条边误当成展示子图。
 """
 
 from __future__ import annotations
@@ -28,14 +23,16 @@ SKILL_PREFIX = "skill:"
 
 
 def _node_id(prefix: str, raw_id: str) -> str:
+    """给原始 ID 加节点类型前缀，避免职位和技能 ID 在图中碰撞。"""
     return f"{prefix}{raw_id}"
 
 
 def build_bipartite_graph(data_dir: Path, min_demand_weight: float = 0.0) -> dict[str, Any]:
-    """Create a validated occupation-skill bipartite graph from clean CSVs.
+    """从 clean CSV 校验并构造职位—技能二部图。
 
-    ``min_demand_weight`` only controls ``display_edges``. The complete edge
-    list remains in ``edges`` so the exported graph is lossless.
+    ``edges`` 保留完整关系（当前数据为 420 条），``display_edges`` 才应用
+    ``min_demand_weight`` 阈值供 PNG/SVG 降噪展示；两者的计数都会写入
+    摘要，便于区分可视化子图与可审计全集。
     """
 
     if not 0 <= min_demand_weight <= 1:
@@ -138,6 +135,8 @@ def build_bipartite_graph(data_dir: Path, min_demand_weight: float = 0.0) -> dic
             }
         )
 
+    # 阈值只影响展示集合，不能裁剪 JSON/CSV 中的完整边，否则下游无法
+    # 重建原始关系或核对 420 条边的完整性。
     display_edges = [edge for edge in edges if edge["weight"] >= min_demand_weight]
     occupation_degree = Counter(edge["occupation_id"] for edge in edges)
     skill_degree = Counter(edge["skill_id"] for edge in edges)
@@ -180,12 +179,18 @@ def build_bipartite_graph(data_dir: Path, min_demand_weight: float = 0.0) -> dic
 
 
 def _write_json(path: Path, payload: Any) -> Path:
+    """以 UTF-8 JSON 写出图或摘要，并返回写入路径。"""
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     return path
 
 
 def write_bipartite_outputs(graph: dict[str, Any], output_dir: Path, render: bool = True) -> dict[str, Path]:
-    """Write JSON, CSV, summary and (when available) a PNG visualization."""
+    """写出完整 JSON、摘要 JSON、边 CSV，以及可选的 PNG 或回退 SVG。
+
+    JSON 适合程序读取完整节点/边，CSV 适合审计和表格分析。渲染时优先生成
+    PNG；只有 matplotlib 与 Pillow 都不可用时才生成同名 SVG，两者不会在一次
+    常规调用中同时更新。可视化可能仅绘制高权重 ``display_edges``。
+    """
 
     output_dir.mkdir(parents=True, exist_ok=True)
     json_path = _write_json(output_dir / "bipartite_graph.json", graph)
@@ -223,6 +228,7 @@ def write_bipartite_outputs(graph: dict[str, Any], output_dir: Path, render: boo
 
 
 def _render_png(graph: dict[str, Any], output_path: Path) -> bool:
+    """优先用 matplotlib 渲染 PNG；缺失时按 Pillow、标准库 SVG 顺序回退。"""
     try:
         import matplotlib.pyplot as plt
         from matplotlib import cm, colors
@@ -231,7 +237,10 @@ def _render_png(graph: dict[str, Any], output_path: Path) -> bool:
 
     occupations = graph["occupation_nodes"]
     skills = graph["skill_nodes"]
+    # 优先画阈值后的可读子图；若阈值筛空，则回退到完整边，确保仍有图。
     edges = graph["display_edges"] or graph["edges"]
+    # 两类节点固定在左右两列，纵坐标按排序后的索引分配；边权映射为
+    # 蓝色深浅和线宽，透明度保持固定，便于从静态图感知需求强弱。
     occupation_pos = {
         node["id"]: (0.0, len(occupations) - index - 1)
         for index, node in enumerate(occupations)
@@ -269,7 +278,7 @@ def _render_png(graph: dict[str, Any], output_path: Path) -> bool:
 
 
 def _render_pil_png(graph: dict[str, Any], output_path: Path) -> bool:
-    """Fallback PNG renderer using Pillow, available in the workspace runtime."""
+    """使用 Pillow 的 PNG 回退渲染器；若 Pillow 也不可用则转为 SVG。"""
 
     try:
         from PIL import Image, ImageDraw, ImageFont
@@ -278,6 +287,8 @@ def _render_pil_png(graph: dict[str, Any], output_path: Path) -> bool:
 
     occupations = graph["occupation_nodes"]
     skills = graph["skill_nodes"]
+    # 与 matplotlib 保持相同语义：职位/技能分列，节点颜色区分类型，
+    # 边颜色和线宽随 demand_weight 增大而增强。
     edges = graph["display_edges"] or graph["edges"]
     width = 2200
     row_gap = 42
@@ -323,11 +334,10 @@ def _render_pil_png(graph: dict[str, Any], output_path: Path) -> bool:
 
 
 def _render_svg(graph: dict[str, Any], output_path: Path) -> bool:
-    """Fallback renderer that needs only the Python standard library.
+    """仅用标准库写 SVG 的最终回退，并保持与 PNG 相同的图语义。
 
-    It writes an SVG next to the requested PNG path when matplotlib is not
-    installed. The SVG is directly viewable in browsers and preserves the
-    same node/edge semantics as the PNG renderer.
+    SVG 会写到请求 PNG 路径的同名 ``.svg`` 文件；浏览器可直接打开，节点
+    仍左右分列，边的颜色和线宽表达 ``demand_weight``，透明度使用固定值。
     """
 
     from html import escape
@@ -376,6 +386,7 @@ def _render_svg(graph: dict[str, Any], output_path: Path) -> bool:
 
 
 def main() -> None:
+    """解析数据/输出目录和展示阈值，生成图谱文件并打印路径 JSON。"""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data-dir", type=Path, default=Path("data/clean"))
     parser.add_argument("--out-dir", type=Path, default=Path("data/processed/bipartite"))

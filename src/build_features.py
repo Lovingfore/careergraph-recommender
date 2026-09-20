@@ -1,4 +1,4 @@
-"""Build compact user-job features for Topic 17 recommendation experiments."""
+"""构建用户—职位特征矩阵、推荐排序与职位转移图产物。"""
 
 from __future__ import annotations
 
@@ -11,15 +11,21 @@ import pandas as pd
 
 
 def cosine(a: np.ndarray, b: np.ndarray) -> float:
+    """计算两个技能向量的余弦相似度；任一零向量时返回 0。"""
+
     denom = float(np.linalg.norm(a) * np.linalg.norm(b))
     return float(np.dot(a, b) / denom) if denom else 0.0
 
 
 def max_path_probability(graph: dict[str, list[tuple[str, float]]], source: str, target: str, max_hops: int = 3) -> tuple[float, int]:
+    """在最多 ``max_hops`` 跳内寻找概率乘积最大的无环职位转移路径。"""
+
     if source == target:
         return 1.0, 0
     best_probability, best_hops = 0.0, max_hops + 1
     def visit(node: str, path: list[str], probability: float):
+        """深度优先枚举无重复节点路径，并更新当前最优概率与跳数。"""
+
         nonlocal best_probability, best_hops
         if node == target and len(path) > 1:
             hops = len(path) - 1
@@ -37,6 +43,8 @@ def max_path_probability(graph: dict[str, list[tuple[str, float]]], source: str,
 
 
 def main():
+    """读取 clean CSV，生成矩阵、全量推荐特征、Top-K 与特征字典。"""
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--data-dir", type=Path, default=Path(__file__).resolve().parents[1] / "data" / "clean")
     parser.add_argument("--out-dir", type=Path, default=Path(__file__).resolve().parents[1] / "data" / "processed")
@@ -51,12 +59,15 @@ def main():
     occupation_names = occupations.set_index("occupation_id")["occupation_name"].to_dict()
     skill_ids = sorted(occ_skill["skill_id"].unique())
 
+    # 1. 以职位为行、技能为列构造需求矩阵，缺失关系补 0，确保所有向量列一致。
     job_vectors = occ_skill.pivot_table(index="occupation_id", columns="skill_id", values="demand_weight", fill_value=0).reindex(columns=skill_ids, fill_value=0)
     job_vectors.to_csv(args.out_dir / "job_feature_matrix.csv", encoding="utf-8-sig")
+    # 2. 每个用户/技能只取最新月份事件，形成当前用户技能向量。
     latest = events.sort_values("month").groupby(["user_id", "skill_id"], as_index=False).tail(1)
     user_vectors = latest.pivot_table(index="user_id", columns="skill_id", values="level", fill_value=0).reindex(columns=skill_ids, fill_value=0)
     user_vectors.to_csv(args.out_dir / "user_feature_matrix.csv", encoding="utf-8-sig")
 
+    # 3. 把职位转移长表转换为邻接表，并同步输出供服务和图谱读取的 JSON。
     graph: dict[str, list[tuple[str, float]]] = {}
     for row in transitions.itertuples(index=False):
         graph.setdefault(row.from_job, []).append((row.to_job, float(row.transition_probability)))
@@ -65,6 +76,7 @@ def main():
         encoding="utf-8",
     )
 
+    # 4. 遍历每个用户与所有非当前职位候选，计算匹配、缺口、成长和路径特征。
     rows = []
     job_ids = list(job_vectors.index)
     for profile in profiles.to_dict("records"):
@@ -83,6 +95,7 @@ def main():
             path_probability, path_length = max_path_probability(graph, profile["current_job"], job_id)
             growth_score = float(np.clip(0.5 + job_vec.mean() - current_vec.mean(), 0, 1))
             estimated_hours = float(round(40 + 320 * gap_score + 12 * missing_count, 2))
+            # 5. 固定推荐公式：0.45 Match - 0.25 Gap + 0.15 Growth + 0.15 Path。
             recommendation_score = float(0.45 * match_score - 0.25 * gap_score + 0.15 * growth_score + 0.15 * path_probability)
             rows.append({
                 "user_id": profile["user_id"],
@@ -103,6 +116,7 @@ def main():
                 "recommendation_score": round(recommendation_score, 6),
                 "is_target": int(job_id == profile["target_job"]),
             })
+    # 6. 按用户对总分降序排名，分别输出全量特征和前五名推荐。
     features = pd.DataFrame(rows)
     features["rank"] = features.groupby("user_id")["recommendation_score"].rank(method="first", ascending=False).astype(int)
     features.sort_values(["user_id", "rank"]).to_csv(args.out_dir / "recommendation_features.csv", index=False, encoding="utf-8-sig")

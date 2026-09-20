@@ -1,4 +1,9 @@
-"""PyTorch-ready temporal skill sequences and graph edge tensors."""
+"""将 clean CSV 转换为 PyTorch 时序样本和图边张量。
+
+PyTorch 是可选的模型依赖：没有它时仍可导入本模块，但真正构造
+``Dataset``、``DataLoader`` 或张量会给出清晰错误，而不会静默地产生错误
+类型。输入主要来自 ``user_skill_events.csv``、技能/职位字典和两类图边表。
+"""
 
 from __future__ import annotations
 
@@ -21,16 +26,20 @@ except ModuleNotFoundError:  # pragma: no cover - exercised only in minimal envi
 
 
 def _require_torch() -> Any:
+    """确认可选 PyTorch 已安装，并返回模块对象供调用方使用。"""
     if torch is None:
         raise RuntimeError("PyTorch is not installed; install requirements-optional-models.txt")
     return torch
 
 
 class SkillSequenceDataset(Dataset):
-    """Contiguous user skill windows with the following month as target.
+    """按用户构造连续月份技能窗口，并以紧随其后的月份作为监督目标。
 
-    Each sample contains ``sequence_length`` months of zero-filled skill
-    vectors and a target vector for the immediately following month.
+    输入事件至少包含 ``user_id``、``month``、``skill_id``、``level``。每位
+    用户的事件会按月份补齐，再按固定技能字典编码为三维序列结构
+    ``[样本, 时间, 技能]``：每个样本的 ``x`` 是连续
+    ``sequence_length`` 个月的 ``[时间, 技能]`` 窗口，``y`` 是下一月的
+    ``[技能]`` 向量；缺失月份或技能以 0 填充，等级裁剪到 [0, 1]。
     """
 
     def __init__(self, events: pd.DataFrame, skill_ids: list[str], sequence_length: int = 3):
@@ -46,6 +55,7 @@ class SkillSequenceDataset(Dataset):
         self.sequence_length = sequence_length
         self.samples: list[tuple[str, np.ndarray, np.ndarray]] = []
 
+        # 先按用户、月份建立稠密向量，确保中间缺失月份不会改变窗口长度。
         for user_id, user_events in events.groupby("user_id", sort=True):
             user_events = user_events.copy()
             user_events["month"] = pd.to_numeric(user_events["month"], errors="raise").astype(int)
@@ -60,15 +70,19 @@ class SkillSequenceDataset(Dataset):
                 skill_index = self.skill_to_index.get(str(row.skill_id))
                 if skill_index is not None:
                     vectors[int(row.month)][skill_index] = float(np.clip(row.level, 0.0, 1.0))
+            # 滑动窗口的最后一个输入月为 start+sequence_length-1，下一月
+            # start+sequence_length 作为 y，因此不会跨用户或跨空洞拼接。
             for start in range(min_month, max_month - sequence_length + 1):
                 x = np.stack([vectors[month] for month in range(start, start + sequence_length)], axis=0)
                 y = vectors[start + sequence_length].copy()
                 self.samples.append((str(user_id), x, y))
 
     def __len__(self) -> int:
+        """返回可用的连续窗口数量。"""
         return len(self.samples)
 
     def __getitem__(self, index: int) -> dict[str, Any]:
+        """返回一个样本：``x`` 为 ``[时间, 技能]``，``y`` 为 ``[技能]``，并附用户 ID。"""
         user_id, x, y = self.samples[index]
         return {
             "x": torch.as_tensor(x, dtype=torch.float32),
@@ -78,6 +92,7 @@ class SkillSequenceDataset(Dataset):
 
 
 def _read_clean(data_dir: Path) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """读取技能字典、用户技能事件和职位-技能关系三张 clean 表。"""
     data_dir = Path(data_dir)
     skills = pd.read_csv(data_dir / "skills.csv")
     events = pd.read_csv(data_dir / "user_skill_events.csv")
@@ -86,7 +101,11 @@ def _read_clean(data_dir: Path) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFram
 
 
 def build_dataloader(data_dir: Path, batch_size: int = 2, sequence_length: int = 3, shuffle: bool = False):
-    """Build a deterministic DataLoader and metadata from clean CSV tables."""
+    """构造 ``DataLoader`` 及其 metadata，并保留技能 ID 的稳定排序。
+
+    metadata 记录技能数量/ID、窗口长度、样本数和 batch 大小，训练与验收
+    可据此解释批量张量形状；默认不打乱，便于时序数据复现和顺序切分。
+    """
 
     _require_torch()
     if batch_size < 1:
@@ -106,6 +125,7 @@ def build_dataloader(data_dir: Path, batch_size: int = 2, sequence_length: int =
 
 
 def _edge_tensor(index: list[tuple[int, int]], weights: list[float]):
+    """将边列表编码为 ``edge_index=[2, edge_count]`` 和 float32 权重。"""
     _require_torch()
     if index:
         edge_index = torch.tensor(index, dtype=torch.long).t().contiguous()
@@ -117,7 +137,13 @@ def _edge_tensor(index: list[tuple[int, int]], weights: list[float]):
 
 
 def build_graph_tensors(data_dir: Path) -> dict[str, Any]:
-    """Build stable occupation-skill, transition, and skill co-occurrence edges."""
+    """根据职位/技能 ID 映射构造三类稳定图张量。
+
+    职位-技能边和职位转移边分别使用各自的整数 ID 映射，权重为
+    ``demand_weight`` 与 ``transition_probability``；同时将同一职位共同
+    要求的技能投影成技能-技能边。每类 ``edge_index`` 都是长整型
+    ``[2, edge_count]``，对应的 ``edge_weight`` 是 float32 一维张量。
+    """
 
     _require_torch()
     data_dir = Path(data_dir)
@@ -145,8 +171,8 @@ def build_graph_tensors(data_dir: Path) -> dict[str, Any]:
             transition_edges.append((job_to_index[row.from_job], job_to_index[row.to_job]))
             transition_weights.append(float(row.transition_probability))
 
-    # A skill-only projection is useful to TemporalGAT, whose nodes are skills.
-    # Connect skills co-required by each occupation, weighted by demand.
+    # TemporalGAT 的节点是技能，因此把每个职位内共同要求的技能投影成
+    # 有向技能边；边权取两端需求权重的较小值，保留共同需求的保守强度。
     skill_pair_weights: dict[tuple[int, int], float] = {}
     for _, group in occupation_skill.groupby("occupation_id", sort=True):
         pairs = list(group[["skill_id", "demand_weight"]].itertuples(index=False, name=None))

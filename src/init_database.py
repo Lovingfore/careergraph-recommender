@@ -1,4 +1,4 @@
-"""Initialize and populate the Topic 17 SQLite database."""
+"""从 clean CSV 初始化并填充 Topic 17 SQLite 数据库的命令行入口。"""
 
 from __future__ import annotations
 
@@ -13,6 +13,11 @@ except ModuleNotFoundError:  # pragma: no cover - exercised when imported as src
 
 
 def main() -> None:
+    """解析数据库路径和 clean 数据目录，创建模式后执行一次全量导入。
+
+    ``--db-path`` 指向要写入的 SQLite 文件，``--data-dir`` 指向包含六个
+    clean CSV 的目录；两者均有项目内默认值，最终以 JSON 打印路径和行数。
+    """
     root = Path(__file__).resolve().parents[1]
     parser = argparse.ArgumentParser(description="Build the Topic 17 SQLite database from clean CSV files")
     parser.add_argument("--db-path", type=Path, default=root / "artifacts" / "topic17.sqlite3")

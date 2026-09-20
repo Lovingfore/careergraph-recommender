@@ -1,4 +1,4 @@
-"""A transparent six-month skill forecast baseline using per-skill linear trend."""
+"""按用户和技能拟合线性趋势，生成透明的六个月预测 baseline。"""
 
 from __future__ import annotations
 
@@ -10,6 +10,8 @@ import pandas as pd
 
 
 def main():
+    """读取月度技能事件，拟合斜率并输出六个月后的归一化技能水平。"""
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--data-dir", type=Path, default=Path(__file__).resolve().parents[1] / "data" / "clean")
     parser.add_argument("--out-dir", type=Path, default=Path(__file__).resolve().parents[1] / "data" / "processed")
@@ -17,12 +19,14 @@ def main():
     args.out_dir.mkdir(parents=True, exist_ok=True)
     events = pd.read_csv(args.data_dir / "user_skill_events.csv")
     rows = []
+    # 每个用户/技能独立拟合月份到水平的一元线性趋势；不足两个观测时斜率为 0。
     for (user_id, skill_id), group in events.groupby(["user_id", "skill_id"]):
         group = group.sort_values("month")
         x = group["month"].to_numpy(dtype=float)
         y = group["level"].to_numpy(dtype=float)
         slope = float(np.polyfit(x, y, 1)[0]) if len(group) >= 2 else 0.0
         last_level = float(group.iloc[-1]["level"])
+        # 以最后观测值外推六个月，并裁剪到技能水平合法区间 [0, 1]。
         forecast = float(np.clip(last_level + slope * 6, 0, 1))
         rows.append({
             "user_id": user_id,

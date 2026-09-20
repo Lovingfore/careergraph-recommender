@@ -1,4 +1,9 @@
-"""Minimal TemporalGAT-compatible model skeleton for the second-week work."""
+"""教学用最小 TemporalGAT 骨架：GRU 时序编码加多头邻居聚合。
+
+模型接收 ``[batch, sequence, skills]`` 的技能等级历史和可选图边，输出
+每项技能下一时刻的 [0, 1] 预测。它刻意保持轻量，供课程实验和训练流程
+验证，不代表生产级图注意力实现；PyTorch 缺失时保留占位类以便导入。
+"""
 
 from __future__ import annotations
 
@@ -16,11 +21,13 @@ except ModuleNotFoundError:  # pragma: no cover - optional dependency
 if nn is not None:
 
     class TemporalGAT(nn.Module):
-        """Encode per-skill histories, aggregate graph neighbours, predict next levels.
+        """编码技能历史、聚合邻居并预测下一月技能等级。
 
-        ``x`` has shape ``[batch, time, num_skills]``.  ``edge_index`` is a
-        skill-to-skill graph with shape ``[2, edges]``; graph inputs are
-        optional so the model can also serve as a temporal-only baseline.
+        GRU 将每个技能的一维历史从 ``[batch, time, 1]`` 编码为最后时刻
+        隐状态，重新排列后得到 ``[batch, skills, hidden_dim]``。随后按
+        ``edge_index=[2, edges]`` 和可选 ``edge_weight`` 汇总邻居，多头线性
+        投影拼回隐藏维度，最后映射回每个技能并用 sigmoid 限制到 [0, 1]。
+        没有图边时，聚合函数直接返回节点特征，模型退化为纯时序 GRU。
         """
 
         def __init__(self, num_skills: int, hidden_dim: int = 32, heads: int = 2):
@@ -38,6 +45,7 @@ if nn is not None:
             self.output = nn.Linear(hidden_dim, 1)
 
         def _aggregate(self, node_features: Tensor, edge_index: Optional[Tensor], edge_weight: Optional[Tensor]) -> Tensor:
+            """按边把源节点消息加权汇总到目标节点并做度归一化。"""
             if edge_index is None or edge_index.numel() == 0:
                 return node_features
             if edge_index.ndim != 2 or edge_index.shape[0] != 2:
@@ -58,12 +66,14 @@ if nn is not None:
             return aggregate / degree.view(1, -1, 1).clamp_min(1e-6)
 
         def forward(self, x: Tensor, edge_index: Optional[Tensor] = None, edge_weight: Optional[Tensor] = None) -> Tensor:
+            """执行时序编码和图邻居聚合，返回形状 ``[batch, num_skills]`` 的预测。"""
             if x.ndim == 2:
                 x = x.unsqueeze(0)
             if x.ndim != 3 or x.shape[-1] != self.num_skills:
                 raise ValueError(f"x must have shape [batch, time, {self.num_skills}]")
             batch_size, _, num_skills = x.shape
-            # Treat each skill as a one-dimensional temporal sequence.
+            # 每项技能独立视为一条一维时间序列；转置后把技能并入 batch，
+            # 让同一个 GRU 参数共享所有技能的月份模式。
             temporal_input = x.transpose(1, 2).reshape(batch_size * num_skills, x.shape[1], 1)
             _, hidden = self.temporal(temporal_input)
             hidden = hidden[-1].reshape(batch_size, num_skills, self.hidden_dim)
@@ -74,6 +84,8 @@ if nn is not None:
 else:
 
     class TemporalGAT:  # type: ignore[no-redef]
+        """PyTorch 不可用时的占位类，在实例化处给出安装提示。"""
+
         def __init__(self, *args, **kwargs):
             raise RuntimeError("PyTorch is not installed; install requirements-optional-models.txt")
 

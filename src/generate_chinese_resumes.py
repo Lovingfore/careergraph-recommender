@@ -1,8 +1,7 @@
-"""Generate a small, deterministic Chinese technical-resume dataset.
+"""生成小型、确定性且可复现的中文技术岗位简历数据集。
 
-The records are synthetic and contain no real person's identity or contact
-information.  O*NET remains the occupation/skill dictionary; this module only
-creates the user-facing resume layer used by the course demo.
+全部记录均为合成教学数据，不包含真实姓名、电话、邮箱或其他联系方式。
+O*NET 仍是职位与技能字典来源；本模块只构造课程演示使用的用户简历层。
 """
 
 from __future__ import annotations
@@ -64,6 +63,8 @@ LEGACY_PROFILES = (
 
 
 def _skill_map(occupation_skill: pd.DataFrame) -> dict[str, list[dict]]:
+    """按职位聚合技能需求，并保留后续生成熟练度所需的需求权重。"""
+
     result: dict[str, list[dict]] = {}
     for occupation_id, group in occupation_skill.groupby("occupation_id", sort=True):
         result[str(occupation_id)] = [
@@ -80,7 +81,11 @@ def generate_resumes(
     count: int = 300,
     seed: int = 20260911,
 ) -> pd.DataFrame:
-    """Return ``count`` reproducible Chinese technical resumes."""
+    """返回 ``count`` 条可复现中文技术简历。
+
+    固定 ``seed`` 控制个人差异；职位需求权重决定技能熟练度基线，职位模板决定
+    教育、经历和目标方向，最后同时输出结构化 ``skill_levels`` 与完整简历文本。
+    """
 
     if count < 1:
         raise ValueError("count must be >= 1")
@@ -91,6 +96,7 @@ def generate_resumes(
     skill_map = _skill_map(occupation_skill)
     rng = np.random.default_rng(seed)
     rows: list[dict] = []
+    # 逐条构造合成记录：相同输入与 seed 会产生完全一致的 300 条课程/测试数据。
     for index in range(count):
         if index < len(LEGACY_PROFILES) and all(job in occupation_names for job in LEGACY_PROFILES[index]):
             current, target = LEGACY_PROFILES[index]
@@ -102,8 +108,7 @@ def generate_resumes(
         profile = skill_map[current]
         skill_levels: dict[str, float] = {}
         for skill in profile:
-            # Keep the level close to the current occupation demand while
-            # adding small individual differences for recommendation ranking.
+            # 熟练度以当前职位需求为中心，并加入小幅个体差异，使推荐排序具有区分度。
             level = np.clip(0.20 + 0.85 * skill["demand_weight"] + rng.normal(0, 0.045), 0.05, 0.98)
             skill_levels[skill["skill_id"]] = round(float(level), 6)
         selected_skill_ids = [skill_id for skill_id, level in skill_levels.items() if level >= 0.28]

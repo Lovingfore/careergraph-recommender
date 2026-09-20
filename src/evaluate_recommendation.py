@@ -1,4 +1,4 @@
-"""Evaluate the small recommendation extract with ranking metrics."""
+"""使用 Precision、Recall 和 NDCG 评估离线推荐排序结果。"""
 
 from __future__ import annotations
 
@@ -10,6 +10,12 @@ import pandas as pd
 
 
 def evaluate_at_k(features: pd.DataFrame, k: int) -> dict[str, float]:
+    """计算所有用户的 Precision@K、Recall@K 与 NDCG@K 均值。
+
+    ``is_target=1`` 的候选职位视为相关结果；Precision@K 衡量前 K 位命中比例，
+    Recall@K 表示目标职位是否进入前 K 位，NDCG@K 根据命中排名给予对数折损。
+    """
+
     precision, recall, ndcg = [], [], []
     for _, group in features.groupby("user_id"):
         ranked = group.sort_values("rank").head(k)
@@ -31,12 +37,15 @@ def evaluate_at_k(features: pd.DataFrame, k: int) -> dict[str, float]:
 
 
 def main():
+    """在 K=1、3、5 三个截断位置评估排序并写出汇总 CSV。"""
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--feature-file", type=Path, default=Path(__file__).resolve().parents[1] / "data" / "processed" / "recommendation_features.csv")
     parser.add_argument("--out-file", type=Path, default=Path(__file__).resolve().parents[1] / "artifacts" / "evaluation_summary.csv")
     args = parser.parse_args()
     args.out_file.parent.mkdir(parents=True, exist_ok=True)
     features = pd.read_csv(args.feature_file)
+    # 多个 K 同时展示首位准确度与更宽推荐列表的召回变化，便于课程实验比较。
     result = pd.DataFrame([evaluate_at_k(features, 1), evaluate_at_k(features, 3), evaluate_at_k(features, 5)])
     result.to_csv(args.out_file, index=False, encoding="utf-8-sig")
     print(result.to_string(index=False))

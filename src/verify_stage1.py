@@ -1,4 +1,9 @@
-"""Acceptance checks for the Topic 17 first-week deliverable."""
+"""Topic 17 第一阶段交付物的组合式验收检查。
+
+脚本把 clean 数据、SQLite 六张表、特征产物、可选 DataLoader、二部图、
+Web 文件/API、模型产物和中文简历数据集分别检查，最后输出可机器读取的
+JSON；它只读取并报告状态，不负责修复或重建产物。
+"""
 
 from __future__ import annotations
 
@@ -21,6 +26,7 @@ EXPECTED_TABLES = ("occupations", "skills", "occupation_skill", "user_profiles",
 
 
 def _database_report(db_path: Path) -> dict[str, Any]:
+    """验收 SQLite 文件可读且六张核心表均非空，返回行数和缺失表。"""
     try:
         counts = get_counts(db_path)
         missing = [table for table in EXPECTED_TABLES if counts.get(table, 0) <= 0]
@@ -30,6 +36,7 @@ def _database_report(db_path: Path) -> dict[str, Any]:
 
 
 def _loader_report(root: Path) -> dict[str, Any]:
+    """尝试构造 DataLoader，报告样本/技能/窗口元数据和首批张量形状。"""
     try:
         loader, metadata = build_dataloader(root / "data" / "clean", batch_size=2, sequence_length=3)
         first_batch = next(iter(loader), None)
@@ -50,6 +57,7 @@ def _loader_report(root: Path) -> dict[str, Any]:
 
 
 def _web_contract_report(root: Path) -> dict[str, Any]:
+    """检查 Django 启动文件、模板和约定的页面/API/图谱路由是否存在。"""
     required = [
         root / "web" / "manage.py",
         root / "web" / "topic17_web" / "settings.py",
@@ -80,6 +88,7 @@ def _web_contract_report(root: Path) -> dict[str, Any]:
 
 
 def _model_report(root: Path) -> dict[str, Any]:
+    """检查 TemporalGAT checkpoint 与评价 JSON，区分已训练和可选依赖缺失。"""
     model_dir = root / "artifacts" / "models"
     checkpoint = model_dir / "temporal_gat.pt"
     evaluation = model_dir / "evaluation_summary.json"
@@ -103,6 +112,7 @@ def _model_report(root: Path) -> dict[str, Any]:
 
 
 def _web_api_report(root: Path) -> dict[str, Any]:
+    """核对 views.py 中 API 视图名称与 urls.py 中公开路径的对应关系。"""
     views_path = root / "web" / "topic17_app" / "views.py"
     urls_path = root / "web" / "topic17_app" / "urls.py"
     if not views_path.exists() or not urls_path.exists():
@@ -130,6 +140,7 @@ def _web_api_report(root: Path) -> dict[str, Any]:
 
 
 def _resume_dataset_report(root: Path) -> dict[str, Any]:
+    """验收中文简历 CSV 的 300 行、中文文本、来源字段和唯一 ID。"""
     path = root / "data" / "clean" / "resumes_zh.csv"
     if not path.exists():
         return {"ok": False, "rows": 0, "error": "resumes_zh.csv is missing"}
@@ -154,6 +165,7 @@ def _resume_dataset_report(root: Path) -> dict[str, Any]:
 
 
 def _bipartite_graph_report(root: Path) -> dict[str, Any]:
+    """重新构造二部图并检查节点、边及孤立节点计数是否满足阶段要求。"""
     try:
         from bipartite_graph import build_bipartite_graph
     except ModuleNotFoundError:
@@ -178,9 +190,11 @@ def _bipartite_graph_report(root: Path) -> dict[str, Any]:
 
 
 def verify_stage1(root: Path, db_path: Path) -> dict[str, Any]:
+    """组合数据、数据库、特征、加载器、图谱、Web、模型和简历验收结果。"""
     root = Path(root)
     clean_dir = root / "data" / "clean"
     processed_dir = root / "data" / "processed"
+    # 各子检查隔离异常并保留结构化错误；单项失败不会阻止其余证据生成。
     try:
         data_integrity = validate_clean_dataset(clean_dir)
     except Exception as exc:
@@ -203,12 +217,15 @@ def verify_stage1(root: Path, db_path: Path) -> dict[str, Any]:
 
 
 def main() -> int:
+    """解析数据库路径，打印验收 JSON，并以 0/1 表示关键项是否全部通过。"""
     root = Path(__file__).resolve().parents[1]
     parser = argparse.ArgumentParser(description="Verify Topic 17 first-week acceptance criteria")
     parser.add_argument("--db-path", type=Path, default=root / "artifacts" / "topic17.sqlite3")
     args = parser.parse_args()
     report = verify_stage1(root, args.db_path)
     print(json.dumps(report, ensure_ascii=False, indent=2))
+    # 模型和 DataLoader 可因可选依赖而 unavailable；关键退出码只聚合
+    # 数据、数据库、特征、图谱、Web 契约/API 和简历数据集这些硬性项。
     critical = [report["data_integrity"], report["database"], report["feature_outputs"], report["bipartite_graph"], report["web_contract"], report["web_api"], report["resume_dataset"]]
     return 0 if all(section.get("ok", False) for section in critical) else 1
 
