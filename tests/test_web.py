@@ -34,6 +34,9 @@ class WebSmokeTests(unittest.TestCase):
         self.assertIn("上传简历".encode("utf-8"), response.content)
         self.assertIn(b"TemporalGAT", response.content)
         self.assertIn(b"TemporalGAT RMSE", response.content)
+        self.assertIn("个人技能雷达图".encode("utf-8"), response.content)
+        self.assertIn("快速路线".encode("utf-8"), response.content)
+        self.assertIn("稳健路线".encode("utf-8"), response.content)
 
     def test_model_info_api_returns_training_metadata(self):
         from django.test import Client
@@ -117,6 +120,14 @@ class WebSmokeTests(unittest.TestCase):
         response = Client().get("/api/recommend/?user_id=u001&top_k=3")
         self.assertEqual(response.status_code, 200)
         self.assertIn("recommendations", response.json())
+        self.assertIn("missing_skills", response.json()["recommendations"][0])
+
+    def test_skill_profile_api_returns_radar_source(self):
+        from django.test import Client
+
+        response = Client().get("/api/skill-profile/?user_id=u001")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("skills", response.json())
 
     def test_skill_gap_api_returns_skills(self):
         from django.test import Client
@@ -128,9 +139,10 @@ class WebSmokeTests(unittest.TestCase):
     def test_career_path_api_returns_path(self):
         from django.test import Client
 
-        response = Client().get("/api/career-path/?user_id=u001&occupation_id=15-1252.00")
+        response = Client().get("/api/career-path/?user_id=u001&occupation_id=15-1252.00&strategy=stable")
         self.assertEqual(response.status_code, 200)
         self.assertIn("path", response.json())
+        self.assertEqual(response.json()["strategy"], "stable")
 
     def test_forecast_api_returns_explicit_status(self):
         from django.test import Client

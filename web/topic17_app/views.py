@@ -23,6 +23,7 @@ from src.recommendation_service import (
     career_path_for_user,
     forecast_for_user,
     recommend_for_user,
+    skill_profile_for_user,
     skill_gap_for_user,
 )
 
@@ -178,6 +179,18 @@ def recommendation_api(request):
     return _service_response(recommend_for_user(values["user_id"], top_k=top_k, root=BASE_DIR))
 
 
+def skill_profile_api(request):
+    """返回已有用户的最新技能水平，供个人技能雷达图展示。"""
+
+    # 1. user_id 是技能画像的唯一必填参数，沿用统一查询参数校验并返回标准 400 错误。
+    values = _required_query(request, "user_id")
+    if isinstance(values, JsonResponse):
+        return values
+    # 2. 视图层不重复聚合技能事件；服务层负责取最新月份、补充中英文名和稳定排序。
+    # _service_response 再把服务层的 ok/error 状态映射为对应 HTTP 状态码。
+    return _service_response(skill_profile_for_user(values["user_id"], root=BASE_DIR))
+
+
 def skill_gap_api(request):
     """读取用户和目标职位，调用服务比较最新技能水平与职位需求。"""
 
@@ -189,13 +202,20 @@ def skill_gap_api(request):
 
 
 def career_path_api(request):
-    """读取用户和目标职位，返回最多三跳的职业转移路径及概率乘积。"""
+    """读取用户、目标职位与策略，返回最多三跳的职业转移路径。"""
 
-    # 输入校验 → 服务在转移图上搜索路径 → JSON 状态映射。
+    # 1. 用户 ID 和目标职位 ID 必填；缺少任一参数时不进入路径算法。
     values = _required_query(request, "user_id", "occupation_id")
     if isinstance(values, JsonResponse):
         return values
-    return _service_response(career_path_for_user(values["user_id"], values["occupation_id"], root=BASE_DIR))
+    # 2. strategy 缺省为 fast，并统一去除首尾空白、转换小写，兼容前端表单字符串。
+    # 合法值的最终校验由服务层完成，非法策略会返回明确业务错误而不是静默降级。
+    strategy = str(request.GET.get("strategy", "fast")).strip().casefold()
+    # 3. 服务层读取职位转移图，按 fast（最少跳数）或 stable（最高概率）选择路径。
+    # 视图仅负责传参和 HTTP 状态转换，避免 Web 层与命令行调用出现两套算法。
+    return _service_response(
+        career_path_for_user(values["user_id"], values["occupation_id"], root=BASE_DIR, strategy=strategy)
+    )
 
 
 def forecast_api(request):
@@ -267,13 +287,15 @@ def resume_upload_api(request):
         text = raw.decode("utf-8-sig")
     except UnicodeDecodeError:
         return JsonResponse({"status": "error", "error": "简历必须使用 UTF-8 编码"}, status=400)
-    # 7. 业务分析：文本与可选职位传给纯内存分析服务，不发生持久化写入。
+    # 7. 业务分析：文本、可选职位和路线策略传给纯内存分析服务，不发生持久化写入。
     try:
         result = analyze_resume_text(
             text,
             root=BASE_DIR,
             current_job=request.POST.get("current_job") or None,
             target_job=request.POST.get("target_job") or None,
+            # 单选按钮提交 fast/stable；未提交时默认快速路线，并做与 GET 接口一致的规范化。
+            strategy=str(request.POST.get("strategy", "fast")).strip().casefold(),
         )
     except ValueError as exc:
         return JsonResponse({"status": "error", "error": str(exc)}, status=400)

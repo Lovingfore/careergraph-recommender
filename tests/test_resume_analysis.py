@@ -17,6 +17,7 @@ class ResumeAnalysisTests(unittest.TestCase):
             root=ROOT,
             current_job="15-1251.00",
             target_job="15-1252.00",
+            strategy="stable",
         )
         after = get_counts(ROOT / "artifacts" / "topic17.sqlite3")
         self.assertEqual(result["status"], "ok")
@@ -24,8 +25,11 @@ class ResumeAnalysisTests(unittest.TestCase):
         self.assertGreaterEqual(result["skill_count"], 1)
         self.assertTrue(result["recognized_skills"])
         self.assertTrue(result["recommendations"])
+        self.assertIn("missing_skills", result["recommendations"][0])
         self.assertIn("skills", result["skill_gap"])
         self.assertIn("path", result["career_path"])
+        self.assertEqual(result["career_path"]["strategy"], "stable")
+        self.assertGreaterEqual(len(result["skill_profile"]), 3)
         self.assertEqual(before, after)
 
     def test_rejects_empty_resume_text(self):
@@ -36,6 +40,10 @@ class ResumeAnalysisTests(unittest.TestCase):
         result = analyze_resume_text("Python 编程 数据库", root=ROOT, target_job="15-1252.00")
         self.assertEqual(result["status"], "ok")
         self.assertIn(result["current_job"], result["occupations"])
+
+    def test_rejects_unknown_route_strategy(self):
+        with self.assertRaises(ValueError):
+            analyze_resume_text("Python 编程", root=ROOT, strategy="unknown")
 
 
 if __name__ == "__main__":

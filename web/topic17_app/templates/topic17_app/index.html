@@ -43,7 +43,32 @@
     .table-wrap { overflow-x:auto; }
     /* 结果渲染：技能标签、进度条与职业路径均由接口 JSON 动态填充。 */
     .result { margin-top:18px; }
+    .section-title { display:flex; justify-content:space-between; gap:12px; align-items:flex-end; margin:22px 0 10px; }
+    .section-title h3 { margin:0; }
+    .section-title small { color:var(--muted); }
     .pill { display:inline-block; padding:4px 8px; margin:3px 4px 0 0; border-radius:999px; background:#dbeafe; color:#1e40af; font-size:12px; }
+    .pill.gap { background:#fff7ed; color:#c2410c; }
+    .pill.clear { background:#ecfdf5; color:#047857; }
+    .strategy-box { display:flex; gap:8px; margin-top:6px; }
+    .strategy-option { flex:1; display:flex; align-items:center; gap:8px; min-height:42px; padding:8px 10px; border:1px solid #cbd5e1; border-radius:10px; background:#fff; cursor:pointer; font-weight:600; }
+    .strategy-option:has(input:checked) { border-color:var(--blue); background:var(--sky); color:var(--blue-dark); box-shadow:0 0 0 2px rgba(37,99,235,.1); }
+    .strategy-option input { width:auto; margin:0; accent-color:var(--blue); }
+    .radar-layout { display:grid; grid-template-columns:minmax(300px,1.15fr) minmax(240px,.85fr); gap:16px; align-items:stretch; }
+    .radar-panel { min-height:360px; padding:10px; border:1px solid var(--line); border-radius:14px; background:linear-gradient(180deg,#f8fbff,#fff); }
+    .radar-panel svg { display:block; width:100%; height:auto; min-height:330px; }
+    .profile-note { padding:18px; border-radius:14px; background:#f8fafc; }
+    .profile-note strong { display:block; margin-bottom:7px; font-size:18px; }
+    .recommendation-list { display:grid; gap:12px; }
+    .job-card { display:grid; grid-template-columns:58px minmax(0,1fr) 150px; gap:14px; align-items:start; padding:16px; border:1px solid var(--line); border-radius:14px; background:#fff; }
+    .job-rank { display:grid; place-items:center; width:44px; height:44px; border-radius:13px; background:linear-gradient(135deg,#dbeafe,#eef2ff); color:var(--blue-dark); font-size:18px; font-weight:800; }
+    .job-main h4 { margin:0 0 7px; font-size:16px; }
+    .job-meta { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:8px; color:var(--muted); font-size:12px; }
+    .job-time { padding:10px; border-radius:11px; background:#f8fafc; text-align:center; color:#475569; font-size:12px; }
+    .job-time strong { display:block; margin-bottom:3px; color:var(--blue-dark); font-size:18px; }
+    .path-summary { display:flex; flex-wrap:wrap; gap:9px; align-items:center; color:var(--muted); font-size:13px; }
+    .strategy-badge { display:inline-flex; padding:5px 9px; border-radius:999px; background:#ede9fe; color:#6d28d9; font-weight:700; }
+    .forecast-list { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:8px; }
+    .forecast-item { padding:10px; border:1px solid var(--line); border-radius:10px; background:#fff; font-size:12px; color:#475569; }
     .skill-bars { display:grid; gap:8px; margin:10px 0 16px; max-width:700px; }
     .skill-row { display:grid; grid-template-columns:120px 1fr 45px; gap:8px; align-items:center; font-size:12px; color:#475569; }
     .bar { height:9px; border-radius:99px; background:#e2e8f0; overflow:hidden; }
@@ -63,7 +88,8 @@
     footer { margin-top:24px; color:var(--muted); font-size:12px; text-align:center; }
     /* 响应式断点：窄屏时两张图改为纵向排列，并压缩页面留白。 */
     @media (max-width:960px) { .graph-grid { grid-template-columns:1fr; } .graph-card p { min-height:0; } }
-    @media (max-width:700px) { .shell { padding:20px 13px 40px; } .hero { display:block; } .hero-note { text-align:left; margin-top:12px; } .card { padding:16px; border-radius:14px; } .graph-card img { height:330px; } }
+    @media (max-width:800px) { .radar-layout { grid-template-columns:1fr; } .job-card { grid-template-columns:48px minmax(0,1fr); } .job-time { grid-column:1/-1; text-align:left; } }
+    @media (max-width:700px) { .shell { padding:20px 13px 40px; } .hero { display:block; } .hero-note { text-align:left; margin-top:12px; } .card { padding:16px; border-radius:14px; } .graph-card img { height:330px; } .strategy-box { flex-direction:column; } }
   </style>
 </head>
 <body>
@@ -81,6 +107,7 @@
       <div class="card metric"><strong>{{ summary.counts.skills|default:"-" }}</strong><span>技能</span><small>职位技能需求向量</small></div>
       <div class="card metric"><strong>{{ summary.counts.user_skill_events|default:"-" }}</strong><span>技能事件</span><small>6 个月时序窗口</small></div>
       <div class="card metric"><strong>{{ summary.loader.num_samples|default:"-" }}</strong><span>训练窗口</span><small>3 个月输入序列</small></div>
+      <div class="card metric"><strong>{{ summary.model.temporal_gat.rmse|default:"-" }}</strong><span>TemporalGAT RMSE</span><small>{{ summary.model.epochs|default:"-" }} 轮训练评估</small></div>
     </section>
 
     <!-- 简历上传：文件通过 FormData 发送到 /api/resume-upload/。 -->
@@ -93,16 +120,27 @@
           <label>简历文件<input id="resume-file" type="file" name="resume" accept=".txt,.md,.csv" required></label>
           <label>当前职位（可选，留空自动推断）<select id="upload-current" name="current_job"><option value="">自动推断</option></select></label>
           <label>目标职位（可选）<select id="upload-target" name="target_job"><option value="">自动选择推荐首位</option></select></label>
+          <label>职业路线策略
+            <span class="strategy-box">
+              <span class="strategy-option"><input type="radio" name="strategy" value="fast" checked>快速路线</span>
+              <span class="strategy-option"><input type="radio" name="strategy" value="stable">稳健路线</span>
+            </span>
+          </label>
         </div>
         <div class="actions"><button type="submit">分析简历并生成规划</button><span id="upload-status" class="status">等待上传…</span></div>
       </form>
       <div id="upload-result" class="result" hidden>
-        <div id="recognized-skills"></div>
-        <div class="grid two">
-          <div><h3>动态职位推荐</h3><div id="upload-recommendations" class="table-wrap"></div></div>
-          <div><h3>目标职位技能缺口</h3><div id="upload-gap" class="table-wrap"></div></div>
+        <div class="section-title"><h3>个人技能雷达图</h3><small>展示技能水平最高的 8 个维度</small></div>
+        <div class="radar-layout">
+          <div id="upload-skill-radar" class="radar-panel"></div>
+          <div id="recognized-skills" class="profile-note"></div>
         </div>
-        <div><h3>职业发展路径</h3><div id="upload-path"></div></div>
+        <div class="section-title"><h3>推荐职位列表</h3><small>逐职位展示技能缺口与预计补全时间</small></div>
+        <div id="upload-recommendations" class="recommendation-list"></div>
+        <div class="grid two" style="margin-top:18px">
+          <div><h3>目标职位详细技能缺口</h3><div id="upload-gap" class="table-wrap"></div></div>
+          <div><h3>职业发展路径</h3><div id="upload-path"></div></div>
+        </div>
       </div>
     </section>
 
@@ -113,9 +151,26 @@
       <div class="form-grid">
         <label>用户 ID<input id="user-id" value="u001" maxlength="20"></label>
         <label>目标职位<select id="demo-occupation"><option value="15-1252.00">加载职位…</option></select></label>
+        <label>职业路线策略
+          <span class="strategy-box">
+            <span class="strategy-option"><input type="radio" name="demo-strategy" value="fast" checked>快速路线</span>
+            <span class="strategy-option"><input type="radio" name="demo-strategy" value="stable">稳健路线</span>
+          </span>
+        </label>
       </div>
       <div class="actions"><button type="button" onclick="loadDemo()">查询基准用户</button><span id="demo-status" class="status">等待查询…</span></div>
-      <pre id="demo-output" class="status" style="margin-top:12px;max-height:340px;overflow:auto">结果将显示在这里</pre>
+      <div id="demo-result" class="result" hidden>
+        <div class="section-title"><h3>个人技能雷达图</h3><small id="demo-profile-caption"></small></div>
+        <div id="demo-skill-radar" class="radar-panel"></div>
+        <div class="section-title"><h3>推荐职位列表</h3><small>技能缺口与补全预计时间</small></div>
+        <div id="demo-recommendations" class="recommendation-list"></div>
+        <div class="grid two" style="margin-top:18px">
+          <div><h3>目标职位详细技能缺口</h3><div id="demo-gap" class="table-wrap"></div></div>
+          <div><h3>职业发展路径</h3><div id="demo-path"></div></div>
+        </div>
+        <div class="section-title"><h3>六个月技能趋势</h3><small>线性 baseline，仅用于教学演示</small></div>
+        <div id="demo-forecast" class="forecast-list"></div>
+      </div>
     </section>
 
     <!-- 图谱区域：分别读取静态二部图 SVG 和动态职位转移 SVG。 -->
@@ -158,21 +213,57 @@
       });
       $('demo-occupation').value = '15-1252.00'; $('upload-target').value = '15-1252.00';
     }
-    // 把表头和二维行数据逐项 HTML 转义后生成表格；空数组显示统一的空状态。
+    // 通用格式化与表格，确保接口返回值在进入页面前全部转义。
+    const percent = (value) => `${Math.round(Math.max(0, Number(value) || 0) * 100)}%`;
     function table(headers, rows) {
-      if (!rows || !rows.length) return '<p class="status">暂无结果</p>';
+      if (!rows || !rows.length) return '<p class="status">暂无明显技能缺口</p>';
       return `<table><thead><tr>${headers.map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map((row) => `<tr>${row.map((cell) => `<td>${esc(cell)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
     }
-    // 上传结果渲染分为四块：识别技能标签/进度条写入 recognized-skills；
-    // 推荐表写入 upload-recommendations；缺口表写入 upload-gap；路径节点写入 upload-path。
+
+    // 不依赖第三方 CDN 的 SVG 雷达图：选择水平最高的 8 项技能并绘制五层网格、轴线和画像多边形。
+    function renderRadar(containerId, sourceSkills) {
+      const container = $(containerId);
+      const skills = (sourceSkills || []).filter((s) => Number.isFinite(Number(s.level))).sort((a,b) => Number(b.level)-Number(a.level)).slice(0,8);
+      if (skills.length < 3) { container.innerHTML = '<p class="status">技能维度不足，暂无法生成雷达图</p>'; return; }
+      const cx=280, cy=166, radius=108, labelRadius=142, count=skills.length;
+      const point = (index, scale) => { const angle=-Math.PI/2 + index*2*Math.PI/count; return [cx+Math.cos(angle)*radius*scale, cy+Math.sin(angle)*radius*scale]; };
+      const polygon = (scale) => skills.map((_,i) => point(i,scale).map((n) => n.toFixed(1)).join(',')).join(' ');
+      const grids = [0.2,0.4,0.6,0.8,1].map((scale) => `<polygon points="${polygon(scale)}" fill="${scale===1?'#f8fbff':'none'}" stroke="#cbd5e1" stroke-width="1"/>`).join('');
+      const axes = skills.map((_,i) => { const [x,y]=point(i,1); return `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#dbe3ef"/>`; }).join('');
+      const values = skills.map((s,i) => point(i,Math.max(0,Math.min(1,Number(s.level)))).map((n) => n.toFixed(1)).join(',')).join(' ');
+      const labels = skills.map((s,i) => { const angle=-Math.PI/2+i*2*Math.PI/count; const x=cx+Math.cos(angle)*labelRadius, y=cy+Math.sin(angle)*labelRadius; const anchor=x<cx-8?'end':x>cx+8?'start':'middle'; return `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="${anchor}" dominant-baseline="middle" fill="#475569" font-size="12">${esc(s.skill_name_zh || s.skill_name)} ${percent(s.level)}</text>`; }).join('');
+      container.innerHTML = `<svg viewBox="0 0 560 340" role="img" aria-label="个人技能雷达图"><title>个人技能雷达图</title>${grids}${axes}<polygon points="${values}" fill="rgba(37,99,235,.24)" stroke="#2563eb" stroke-width="3"/>${skills.map((s,i) => { const [x,y]=point(i,Math.max(0,Math.min(1,Number(s.level)))); return `<circle cx="${x}" cy="${y}" r="4" fill="#1d4ed8"><title>${esc(s.skill_name_zh || s.skill_name)} ${percent(s.level)}</title></circle>`; }).join('')}${labels}</svg>`;
+    }
+
+    function renderRecommendations(containerId, recommendations) {
+      const rows = recommendations || [];
+      if (!rows.length) { $(containerId).innerHTML='<p class="status">暂无推荐职位</p>'; return; }
+      $(containerId).innerHTML = rows.map((item) => {
+        const gaps=item.missing_skills || [];
+        const tags=gaps.length ? gaps.slice(0,6).map((skill) => `<span class="pill gap">${esc(skill.skill_name_zh || skill.skill_name)} · 差 ${percent(skill.gap)}</span>`).join('') + (gaps.length>6 ? `<span class="pill gap">另 ${gaps.length-6} 项</span>` : '') : '<span class="pill clear">暂无明显技能缺口</span>';
+        const hours=Math.max(0,Number(item.estimated_training_hours)||0), weeks=(hours/10).toFixed(1);
+        return `<article class="job-card"><div class="job-rank">${esc(item.rank)}</div><div class="job-main"><h4>${esc(item.candidate_job_name_zh || item.candidate_job_name || item.candidate_job)}</h4><div class="job-meta"><span>匹配度 ${percent(item.match_score)}</span><span>综合得分 ${percent(item.recommendation_score)}</span><span>缺口 ${gaps.length} 项</span></div><div>${tags}</div></div><div class="job-time"><strong>${esc(hours.toFixed(0))} 小时</strong>补全预计时间<br>按每周 10 小时约 ${esc(weeks)} 周</div></article>`;
+      }).join('');
+    }
+
+    function renderGap(containerId, gap) {
+      $(containerId).innerHTML = table(['技能','当前水平','职位需求','差距'], ((gap && gap.skills) || []).slice(0,10).map((s) => [s.skill_name_zh || s.skill_name, percent(s.current_level), percent(s.demand_weight), percent(s.gap)]));
+    }
+
+    function renderPath(containerId, path) {
+      const names=(path && path.path_names) || [];
+      const explanation=path.strategy==='stable' ? '优先选择累计转移概率最高的路径' : '优先选择跳数最少、能更快到达的路径';
+      $(containerId).innerHTML = `<div class="path-summary"><span class="strategy-badge">${esc(path.strategy_name || '路线规划')}</span><span>${esc(explanation)}</span></div><div class="path">${names.length ? names.map((name,i) => `${i?'<i>→</i>':''}<span>${esc(name)}</span>`).join('') : '<span>暂无三跳以内可行路径</span>'}</div><p>累计可行性 ${percent(path.path_probability)} · ${path.path_length < 0 ? '未连通' : esc(path.path_length)+' 跳'}</p>`;
+    }
+
     function renderUpload(payload) {
-      $('upload-result').hidden = false;
-      const skills = payload.recognized_skills || [];
-      $('recognized-skills').innerHTML = `<h3>识别技能（${payload.skill_count} 项）</h3><div>${skills.map((s) => `<span class="pill">${esc(s.skill_name_zh)} · ${esc(s.level)}</span>`).join('') || '<span class="status">未识别到标准技能，已使用基础技能向量。</span>'}</div><div class="skill-bars">${skills.map((s) => `<div class="skill-row"><span>${esc(s.skill_name_zh)}</span><span class="bar"><span class="fill" style="width:${Math.round(Number(s.level) * 100)}%"></span></span><span>${Math.round(Number(s.level) * 100)}%</span></div>`).join('')}</div>`;
-      $('upload-recommendations').innerHTML = table(['排名','职位','匹配度','缺口','预计补全小时'], (payload.recommendations || []).map((r) => [r.rank, r.candidate_job_name_zh || r.candidate_job_name, r.match_score, r.gap_score, r.estimated_training_hours]));
-      $('upload-gap').innerHTML = table(['技能','当前水平','职位需求','缺口'], (payload.skill_gap.skills || []).slice(0, 8).map((s) => [s.skill_name_zh, s.current_level, s.demand_weight, s.gap]));
-      const path = payload.career_path || {}; const names = path.path_names || [];
-      $('upload-path').innerHTML = `<div class="path">${names.length ? names.map((name, i) => `${i ? '<i>→</i>' : ''}<span>${esc(name)}</span>`).join('') : '<span>暂无三跳以内可行路径</span>'}</div><p>路径可行性：${esc(path.path_probability)} · 跳数：${esc(path.path_length)}</p>`;
+      $('upload-result').hidden=false;
+      const recognized=payload.recognized_skills || [];
+      renderRadar('upload-skill-radar', payload.skill_profile || recognized);
+      $('recognized-skills').innerHTML = `<strong>已识别 ${esc(payload.skill_count)} 项技能</strong><p>当前职位：${esc(payload.current_job_name_zh || payload.current_job_name)}<br>目标职位：${esc(payload.target_job_name_zh || payload.target_job_name)}</p><div>${recognized.map((s) => `<span class="pill">${esc(s.skill_name_zh || s.skill_name)} · ${percent(s.level)}</span>`).join('') || '<span class="status">未识别到标准技能，雷达图采用基础技能向量。</span>'}</div>`;
+      renderRecommendations('upload-recommendations', payload.recommendations);
+      renderGap('upload-gap', payload.skill_gap);
+      renderPath('upload-path', payload.career_path || {});
     }
     // 页面加载后获取职位字典；失败时只更新上传状态，不影响首屏指标和静态图谱展示。
     async function init() {
@@ -190,18 +281,21 @@
         status.className = 'status ok'; status.textContent = `已完成：${payload.filename} · 仅内存分析 · persisted=false`; renderUpload(payload);
       } catch (error) { status.className = 'status error'; status.textContent = error.message; $('upload-result').hidden = true; }
     });
-    // 已有用户查询并行请求 /api/recommend/、/api/skill-gap/、/api/career-path/
-    // 和 /api/forecast/。Promise.all 等待四个响应后把完整 JSON 汇总到 demo-output；
-    // 输入缺失会直接提示，网络失败或 JSON 解析异常进入 catch；HTTP 错误 JSON
-    // 当前仍作为结果展示，因为 jsonRequest 不会主动按 response.ok 抛错。
+    // 已有用户查询同时取得技能画像、职位推荐、目标缺口、策略路径与趋势预测。
     async function loadDemo() {
-      const userId = encodeURIComponent($('user-id').value.trim()); const occupationId = encodeURIComponent($('demo-occupation').value); const status = $('demo-status');
+      const userId=encodeURIComponent($('user-id').value.trim()), occupationId=encodeURIComponent($('demo-occupation').value), strategy=encodeURIComponent(document.querySelector('input[name="demo-strategy"]:checked').value), status=$('demo-status');
       if (!userId || !occupationId) { status.className='status error'; status.textContent='请填写用户 ID 和目标职位'; return; }
       status.className='status'; status.textContent='查询中…';
       try {
-        const results = await Promise.all(['/api/recommend/?user_id='+userId+'&top_k=5','/api/skill-gap/?user_id='+userId+'&occupation_id='+occupationId,'/api/career-path/?user_id='+userId+'&occupation_id='+occupationId,'/api/forecast/?user_id='+userId+'&months=6'].map((url) => jsonRequest(url)));
-        $('demo-output').textContent = JSON.stringify(Object.fromEntries(results.map((item, index) => [['recommend','gap','path','forecast'][index], item.payload])), null, 2); status.className='status ok'; status.textContent='查询完成';
-      } catch (error) { status.className='status error'; status.textContent='请求失败：'+error.message; }
+        const results=await Promise.all(['/api/skill-profile/?user_id='+userId,'/api/recommend/?user_id='+userId+'&top_k=5','/api/skill-gap/?user_id='+userId+'&occupation_id='+occupationId,'/api/career-path/?user_id='+userId+'&occupation_id='+occupationId+'&strategy='+strategy,'/api/forecast/?user_id='+userId+'&months=6'].map((url) => jsonRequest(url)));
+        const failed=results.find((item) => !item.response.ok); if (failed) throw new Error(failed.payload.error || '查询失败');
+        const [profile,recommend,gap,path,forecast]=results.map((item) => item.payload);
+        $('demo-result').hidden=false; $('demo-profile-caption').textContent=`${profile.skills.length} 个技能维度 · 用户 ${profile.user_id}`;
+        renderRadar('demo-skill-radar', profile.skills); renderRecommendations('demo-recommendations', recommend.recommendations); renderGap('demo-gap',gap); renderPath('demo-path',path);
+        const names=Object.fromEntries(profile.skills.map((skill) => [skill.skill_id,skill.skill_name_zh || skill.skill_name]));
+        $('demo-forecast').innerHTML=(forecast.forecasts || []).slice(0,12).map((item) => `<div class="forecast-item"><strong>${esc(names[item.skill_id] || item.skill_id)}</strong><br>${percent(item.last_level)} → ${percent(item.forecast_level)}</div>`).join('') || '<p class="status">暂无趋势预测</p>';
+        status.className='status ok'; status.textContent=`查询完成 · ${path.strategy_name}`;
+      } catch (error) { status.className='status error'; status.textContent='请求失败：'+error.message; $('demo-result').hidden=true; }
     }
     init();
   </script>
