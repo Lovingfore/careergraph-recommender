@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CareerGraph · 动态职业规划</title>
   <style>
+    /* 主题变量：集中定义文字、边框、品牌色与阴影，供整页组件复用。 */
     :root { --ink:#172033; --muted:#64748b; --line:#e2e8f0; --blue:#2563eb; --blue-dark:#1e40af; --sky:#eff6ff; --green:#15803d; --shadow:0 12px 30px rgba(15,23,42,.08); }
     * { box-sizing:border-box; }
     body { margin:0; color:var(--ink); font-family: "Microsoft YaHei", "Segoe UI", sans-serif; background:linear-gradient(135deg,#f8fbff 0%,#f1f5f9 55%,#eef2ff 100%); }
@@ -19,16 +20,12 @@
     .grid { display:grid; gap:16px; }
     .metrics { grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); margin-bottom:18px; }
     .two { grid-template-columns:repeat(auto-fit,minmax(330px,1fr)); }
+    /* 通用卡片：指标、表单、查询结果和图谱使用同一视觉容器。 */
     .card { background:rgba(255,255,255,.92); border:1px solid rgba(226,232,240,.9); border-radius:18px; padding:20px; box-shadow:var(--shadow); }
     .metric strong { display:block; font-size:30px; color:var(--blue-dark); }
     .metric span { color:var(--muted); font-size:13px; }
     .metric small { display:block; color:var(--muted); margin-top:5px; }
-    .model-card { border-left:5px solid var(--blue); }
-    .model-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(145px,1fr)); gap:12px; }
-    .model-stat { background:var(--sky); border-radius:12px; padding:12px; }
-    .model-stat b { display:block; font-size:18px; margin-top:4px; }
-    .model-stat small { color:var(--muted); }
-    .notice { padding:11px 13px; border-radius:10px; background:#fffbeb; color:#92400e; font-size:13px; line-height:1.55; }
+    /* 表单与状态：统一上传、职位选择、操作按钮及成功/失败反馈。 */
     label { display:block; color:#334155; font-size:13px; font-weight:600; }
     input, select, button { width:100%; margin-top:6px; padding:10px 11px; border:1px solid #cbd5e1; border-radius:10px; font:inherit; background:#fff; }
     input[type=file] { padding:8px; }
@@ -44,6 +41,7 @@
     th,td { padding:9px 8px; text-align:left; border-bottom:1px solid var(--line); vertical-align:top; }
     th { color:#475569; background:#f8fafc; font-weight:700; }
     .table-wrap { overflow-x:auto; }
+    /* 结果渲染：技能标签、进度条与职业路径均由接口 JSON 动态填充。 */
     .result { margin-top:18px; }
     .pill { display:inline-block; padding:4px 8px; margin:3px 4px 0 0; border-radius:999px; background:#dbeafe; color:#1e40af; font-size:12px; }
     .skill-bars { display:grid; gap:8px; margin:10px 0 16px; max-width:700px; }
@@ -54,18 +52,29 @@
     .path span { padding:8px 10px; background:#eef2ff; border-radius:9px; font-size:13px; }
     .path i { color:#94a3b8; font-style:normal; }
     img { display:block; width:100%; max-height:620px; object-fit:contain; border:1px solid var(--line); border-radius:12px; background:#fff; }
+    /* 双图网格：二部图与职位转移图在宽屏并排，并保持相同卡片高度。 */
+    .graph-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin-top:16px; align-items:stretch; }
+    .graph-card { display:flex; min-width:0; flex-direction:column; }
+    .graph-card p { min-height:52px; margin:0 0 12px; }
+    .graph-card a { display:block; margin-top:auto; }
+    .graph-card img { height:410px; max-height:none; }
+    .graph-hint { display:block; margin-top:9px; color:var(--muted); font-size:12px; text-align:center; }
     code { padding:2px 5px; border-radius:5px; background:#f1f5f9; color:#334155; }
     footer { margin-top:24px; color:var(--muted); font-size:12px; text-align:center; }
-    @media (max-width:700px) { .shell { padding:20px 13px 40px; } .hero { display:block; } .hero-note { text-align:left; margin-top:12px; } .card { padding:16px; border-radius:14px; } }
+    /* 响应式断点：窄屏时两张图改为纵向排列，并压缩页面留白。 */
+    @media (max-width:960px) { .graph-grid { grid-template-columns:1fr; } .graph-card p { min-height:0; } }
+    @media (max-width:700px) { .shell { padding:20px 13px 40px; } .hero { display:block; } .hero-note { text-align:left; margin-top:12px; } .card { padding:16px; border-radius:14px; } .graph-card img { height:330px; } }
   </style>
 </head>
 <body>
   <main class="shell">
+    <!-- 页面头部：说明项目定位和教学数据边界。 -->
     <header class="hero">
       <div><p class="eyebrow">CareerGraph Recommender</p><h1>动态职业发展工作台</h1><p>从技能画像到职位推荐、技能缺口和职业路径，一页完成课程设计演示。</p></div>
       <p class="hero-note">本页面使用 O*NET 职位/技能字典与 300 条确定性合成中文技术岗简历；结果用于教学实验，不代表真实招聘市场。</p>
     </header>
 
+    <!-- 数据规模卡片：数值由 Django index 视图注入的 summary 提供。 -->
     <section class="grid metrics" aria-label="数据规模">
       <div class="card metric"><strong>{{ summary.counts.user_profiles|default:"-" }}</strong><span>合成简历 / 用户</span><small>主数据 resumes_zh.csv</small></div>
       <div class="card metric"><strong>{{ summary.counts.occupations|default:"-" }}</strong><span>职位</span><small>O*NET 30.2 字典</small></div>
@@ -74,29 +83,7 @@
       <div class="card metric"><strong>{{ summary.loader.num_samples|default:"-" }}</strong><span>训练窗口</span><small>3 个月输入序列</small></div>
     </section>
 
-    <section class="grid two">
-      <article class="card model-card">
-        <h2>模型状态</h2>
-        <div id="model-status" class="status {% if summary.model.status == 'trained' %}ok{% endif %}">{{ summary.model.status|default:"unavailable" }}</div>
-        <div class="model-grid" id="model-stats">
-          <div class="model-stat"><small>训练轮数</small><b>{{ summary.model.epochs|default:"-" }}</b></div>
-          <div class="model-stat"><small>样本切分</small><b>{{ summary.model.split.train|default:"-" }}/{{ summary.model.split.validation|default:"-" }}/{{ summary.model.split.test|default:"-" }}</b></div>
-          <div class="model-stat"><small>TemporalGAT MAE</small><b>{{ summary.model.temporal_gat.mae|default:"-" }}</b></div>
-          <div class="model-stat"><small>TemporalGAT RMSE</small><b>{{ summary.model.temporal_gat.rmse|default:"-" }}</b></div>
-          <div class="model-stat"><small>Baseline MAE</small><b>{{ summary.model.baseline.mae|default:"-" }}</b></div>
-          <div class="model-stat"><small>Baseline RMSE</small><b>{{ summary.model.baseline.rmse|default:"-" }}</b></div>
-        </div>
-        <p class="notice">TemporalGAT 已完成训练，但当前小规模合成数据上线性趋势 baseline 误差更低；页面只展示实验指标，不夸大模型效果。</p>
-      </article>
-      <article class="card">
-        <h2>数据库与 DataLoader</h2>
-        <div class="status {% if summary.database.ok %}ok{% endif %}">数据库：{% if summary.database.ok %}已连接{% else %}不可用{% endif %}<br>DataLoader：{{ summary.loader.status|default:"unavailable" }} · 窗口形状 [batch, 3, 35]</div>
-        <div class="table-wrap"><table><thead><tr><th>核心表</th><th>行数</th></tr></thead><tbody>
-          {% for name, count in summary.counts.items %}<tr><td><code>{{ name }}</code></td><td>{{ count }}</td></tr>{% endfor %}
-        </tbody></table></div>
-      </article>
-    </section>
-
+    <!-- 简历上传：文件通过 FormData 发送到 /api/resume-upload/。 -->
     <section class="card" style="margin-top:16px">
       <h2>上传简历：即时分析（不落库）</h2>
       <p>支持 UTF-8 编码的 <code>.txt</code>、<code>.md</code>、<code>.csv</code>，大小不超过 1 MB。文件只在本次请求内存中解析，数据库和训练数据不会改变。</p>
@@ -119,6 +106,7 @@
       </div>
     </section>
 
+    <!-- 已有用户查询：并行请求推荐、缺口、路径和预测接口。 -->
     <section class="card" style="margin-top:16px">
       <h2>已有用户查询</h2>
       <p>用于对比 300 条基准简历的离线推荐、缺口、路径与 6 个月 baseline 预测。</p>
@@ -130,15 +118,30 @@
       <pre id="demo-output" class="status" style="margin-top:12px;max-height:340px;overflow:auto">结果将显示在这里</pre>
     </section>
 
-    <section class="card" style="margin-top:16px">
-      <h2>职位—技能二部图</h2>
-      <p>左侧为职位节点，右侧为技能节点，边权表示清洗后的职位技能需求权重。</p>
-      <img src="/bipartite-graph.svg" alt="职位—技能二部图">
+    <!-- 图谱区域：分别读取静态二部图 SVG 和动态职位转移 SVG。 -->
+    <section class="graph-grid" aria-label="职业关系图谱">
+      <article class="card graph-card">
+        <h2>职位—技能二部图</h2>
+        <p>左侧为职位节点，右侧为技能节点，边权表示清洗后的职位技能需求权重。</p>
+        <a href="/bipartite-graph.svg" target="_blank" rel="noopener" title="打开职位—技能二部图大图">
+          <img src="/bipartite-graph.svg" alt="职位—技能二部图">
+        </a>
+        <span class="graph-hint">点击图片可打开完整大图</span>
+      </article>
+      <article class="card graph-card">
+        <h2>职位转移概率图</h2>
+        <p>箭头表示职位转移方向，连线上的百分比表示教学数据中的转移概率。</p>
+        <a href="/transition-graph.svg" target="_blank" rel="noopener" title="打开职位转移概率图大图">
+          <img src="/transition-graph.svg" alt="职位转移概率图">
+        </a>
+        <span class="graph-hint">点击图片可打开完整大图</span>
+      </article>
     </section>
     <footer>CareerGraph Recommender · 本地 Django 演示 · 上传简历不会写入 SQLite</footer>
   </main>
 
   <script>
+    // 公共工具：按 id 查找 DOM；转义接口值以避免注入；统一执行 fetch 并解析 JSON。
     const $ = (id) => document.getElementById(id);
     const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     async function jsonRequest(url, options) {
@@ -146,6 +149,8 @@
       const payload = await response.json();
       return { response, payload };
     }
+    // /api/occupations/ 返回同一份职位字典，分别填充上传当前职位、上传目标职位
+    // 和已有用户目标职位三个下拉框；前两个下拉框保留各自的自动选择默认项。
     function fillOccupations(rows) {
       ['upload-current','upload-target','demo-occupation'].forEach((id) => {
         const select = $(id); const keep = id === 'upload-current' ? '<option value="">自动推断</option>' : id === 'upload-target' ? '<option value="">自动选择推荐首位</option>' : '';
@@ -153,10 +158,13 @@
       });
       $('demo-occupation').value = '15-1252.00'; $('upload-target').value = '15-1252.00';
     }
+    // 把表头和二维行数据逐项 HTML 转义后生成表格；空数组显示统一的空状态。
     function table(headers, rows) {
       if (!rows || !rows.length) return '<p class="status">暂无结果</p>';
       return `<table><thead><tr>${headers.map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map((row) => `<tr>${row.map((cell) => `<td>${esc(cell)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
     }
+    // 上传结果渲染分为四块：识别技能标签/进度条写入 recognized-skills；
+    // 推荐表写入 upload-recommendations；缺口表写入 upload-gap；路径节点写入 upload-path。
     function renderUpload(payload) {
       $('upload-result').hidden = false;
       const skills = payload.recognized_skills || [];
@@ -166,9 +174,13 @@
       const path = payload.career_path || {}; const names = path.path_names || [];
       $('upload-path').innerHTML = `<div class="path">${names.length ? names.map((name, i) => `${i ? '<i>→</i>' : ''}<span>${esc(name)}</span>`).join('') : '<span>暂无三跳以内可行路径</span>'}</div><p>路径可行性：${esc(path.path_probability)} · 跳数：${esc(path.path_length)}</p>`;
     }
+    // 页面加载后获取职位字典；失败时只更新上传状态，不影响首屏指标和静态图谱展示。
     async function init() {
       try { const {payload} = await jsonRequest('/api/occupations/'); if (payload.status === 'ok') fillOccupations(payload.occupations); } catch (error) { $('upload-status').textContent = '职位字典加载失败'; }
     }
+    // 上传链路：读取表单中的文件和可选职位 → FormData 原样提交给 Django
+    // → Django 完成文件校验和内存分析 → 返回推荐、技能缺口和职业路径
+    // → renderUpload 将三类结果写入对应 DOM；任何错误写入 upload-status。
     $('upload-form').addEventListener('submit', async (event) => {
       event.preventDefault(); const status = $('upload-status'); status.className = 'status'; status.textContent = '解析中…';
       const file = $('resume-file').files[0]; if (!file) { status.className = 'status error'; status.textContent = '请选择简历文件'; return; }
@@ -178,6 +190,10 @@
         status.className = 'status ok'; status.textContent = `已完成：${payload.filename} · 仅内存分析 · persisted=false`; renderUpload(payload);
       } catch (error) { status.className = 'status error'; status.textContent = error.message; $('upload-result').hidden = true; }
     });
+    // 已有用户查询并行请求 /api/recommend/、/api/skill-gap/、/api/career-path/
+    // 和 /api/forecast/。Promise.all 等待四个响应后把完整 JSON 汇总到 demo-output；
+    // 输入缺失会直接提示，网络失败或 JSON 解析异常进入 catch；HTTP 错误 JSON
+    // 当前仍作为结果展示，因为 jsonRequest 不会主动按 response.ok 抛错。
     async function loadDemo() {
       const userId = encodeURIComponent($('user-id').value.trim()); const occupationId = encodeURIComponent($('demo-occupation').value); const status = $('demo-status');
       if (!userId || !occupationId) { status.className='status error'; status.textContent='请填写用户 ID 和目标职位'; return; }
